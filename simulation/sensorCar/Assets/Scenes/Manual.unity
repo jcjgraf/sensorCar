@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c05e8fcce294481eab3eca5bf4cf926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePath: /Users/JeanClaude/Documents/Programming/selfdrivingCar/neuralNetwork/sensorCar/dataset/
+  filePath: ../dataset/
   fileName: track
   isRecording: 0
   recordTimeInterval: 0.2
