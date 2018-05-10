@@ -18,7 +18,7 @@ class FullyConnected():
 		evaluated and with train the network can be trained
 	"""
 
-	def __init__(self, shape, learningRate):
+	def __init__(self, shape):
 		"""
 			shape is the array, where each element represents the number of
 			fully connected nodes in a specific layer.
@@ -29,8 +29,6 @@ class FullyConnected():
 
 		# TODO Gaussian Normal distribution
 		self.weights = [np.random.randn(y, x) for x, y in zip(self.shape[:-1], self.shape[1:])]
-
-		self.learningRate = learningRate
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
@@ -61,11 +59,11 @@ class FullyConnected():
 
 		return layerVector
 
-	def train(self, inputs, targetValue):
+	def train(self, inputs, targetValue, learningRate=0.5):
 		"""
 			inputs in a inputlayer vector, where targetValue is a vector holding
 			the associated lables. A deltaError is calculated and the weights
-			are updated
+			are updated. An optional learningRate can be given
 		"""
 
 		# Bring vectors to the right shape: (n, 1)
@@ -89,7 +87,7 @@ class FullyConnected():
 
 			# Update weights
 			# same as self.weights[-index] which doesn't work for some reason
-			deltaWeight = self.learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)
+			deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)
 
 			self.weights[len(self.weights) - 1 - index] -= deltaWeight
 
