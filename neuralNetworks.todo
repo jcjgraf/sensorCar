@@ -1,0 +1,11 @@
+NeuralNetworks TODO:
+
+FullyConnected:
+  -> .\fullyConnected.py\
+
+ ☐ guassian normal distribution at weight initialisation @low
+ ☐ check that everything is right with the arrays (shape match etc.) @high
+ ☐ check for overfitting @low
+ ☐ check if a file already exist when saving @low
+ ☐ when weights are loaded make sure that everythings works properly @low
+
