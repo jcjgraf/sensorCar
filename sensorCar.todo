@@ -1,0 +1,24 @@
+SensorCar TODO:
+
+  Simulation:
+
+    carSensor:
+      -> .\simulation/sensorCar/Assets/Scripts/carSensor.js\
+
+    ☐ if sensor hits nothing, no value is given for this sensor -> array has not n elements @high
+    ☐ make it work with n sensors @low
+
+    carRecorder:
+      -> .\simulation/sensorCar/Assets/Scripts/carRecorder.js\
+
+    ☐ always when the recording-mode is stopped @high
+    ☐ make work with n sensors @low
+    ☐ create dataset folder if it does not exist @low
+
+  NeuralNetwork:
+
+    main:
+      -> .\main.py\
+
+
+
