@@ -1,7 +1,7 @@
-#! /usr/bin/env python3
-
 """
-
+	SensorCarController combines the fullyConnected ANN and the dataSet in order to
+	make the sensorCar in the simulation run. Offers training functionality and
+	acts as a wrapper for fullyConnected and dataSet
 """
 
 import sys
@@ -15,41 +15,30 @@ from dataSet import DataSet
 import numpy as np
 
 
-class SensorCarNetwork():
+class SensorCarController():
 	"""
-		net
+		SensorCarController combines the fullyConnected ANN and the dataSet in
+		order to make the sensorCar in the simulation run. Offers training
+		functionality and acts as a wrapper for fullyConnected and dataSet
 	"""
 
-	def __init__(self, networkShape, dataSetPath=False, dataSetInputLabelRatio=False):
+	def __init__(self, networkShape=False, dataSetPath=False, dataSetInputLabelRatio=False):
 		"""
-			Init FullyConnected network and if a dataSetPath and dataSetInputLabelRatio is
-			provided, also a DataSet
+			Init FullyConnected network with an optional networkShape and a
+			dataSet if the optional dataSetPath and dataSetInputLabelRatio are
+			provided
 		"""
 
-		self.net = FullyConnected(networkShape)
+		if networkShape is not False:
+			self.net = FullyConnected(networkShape)
 
-		if dataSetPath and dataSetInputLabelRatio:
-
+		if dataSetPath is not False and dataSetInputLabelRatio is not False:
 			self.dataSet = DataSet(dataSetPath, dataSetInputLabelRatio)
-
-	def prepareForTraining(self):
-		"""
-			Prepare the dataSet if not already done. If no dataSet is initialized,
-			false is returned, else true
-		"""
-
-		# If no dataSet is initialized, return
-		if self.dataSet is None:
-			return False
-
-		self.dataSet.prepareDataSet()
-
-		return True
 
 	def trainNetwork(self, epochs=1):
 		"""
-			Train network, but only if a dataSet is initialized. An optional
-			epochs parameter can be given
+			Train network, but only if a network and a a dataSet are initialized.
+			An optional epochs parameter can be given
 		"""
 
 		# If no dataSet is initialized, training is not possible
@@ -57,16 +46,28 @@ class SensorCarNetwork():
 		# 	print("No dataSet initialized. Training not possible")
 		# 	return
 
-		print("Training network")
+		if self.net is None:
+			print("No network initiated. Training not prossible")
+			return
+
+		if self.dataSet is None:
+			print("No dataSet initiated. Training not possible")
+			return
+
+		if self.dataSet.trainingDataSetPath is None:
+			print("No trainingDataSet generated. Training not possible")
+			return
+
+		print("Train network")
 
 		for epoch in range(epochs):
 
-			print("Epoch {}".format(epoch + 1))
+			# TODO shuffle dataSet
+			print("Epoch {} / {}".format(epoch, epochs))
 
 			# Get the training entities line by line and train the network with them
 			line = 1  # Starts with index 1 not 0
-
-			lineEntities = self.dataSet.getInputLableEntity(line, self.dataSet.trainingDataSetPath)
+			lineEntities = self.dataSet.getInputLableEntities(line)  # False in case we are at the end of the file
 
 			# While we are not at the end of the list
 			while lineEntities is not False:
@@ -75,14 +76,29 @@ class SensorCarNetwork():
 
 				line += 1
 
-				lineEntities = self.dataSet.getInputLableEntity(line, self.dataSet.trainingDataSetPath)
+				lineEntities = self.dataSet.getInputLableEntities(line)
 
-		print("Finished training")
+		print("Finished training with {} epochs".format(epochs))
 
 	def getPerformance(self):
 		"""
-			Calculates the performance of the network
+			Calculates the performance of the network with the testDataSet by
+			subtracting the lables from the evaluated input vector in the net,
+			and calculating the mean of the resulting vector. Returning the
+			deltaError
 		"""
+
+		if self.net is None:
+			print("No network initiated. Calculating performance not prossible")
+			return
+
+		if self.dataSet is None:
+			print("No dataSet initiated. Calculating performance not possible")
+			return
+
+		if self.dataSet.testDataSetPath is None:
+			print("No testDataSet generated. Calculating performance not possible")
+			return
 
 		with open(self.dataSet.testDataSetPath, "r") as f:
 
@@ -101,20 +117,39 @@ class SensorCarNetwork():
 					# Evaluate inputs
 					outputs = self.evaluateMetering(inputs)
 
+					# Calculate difference by calculating outputs - labels
 					differences.append(np.subtract(outputs, labels))
 
 				except Exception as e:
 					raise e
 
+			# Average resulting vector
 			deltaError = np.average(np.array(differences))
 
-			print("dError", deltaError)
+			return deltaError
 
 	def evaluateMetering(self, sensorInputs):
 		"""
-			Takes the sensorInputs vector and returns the evaluated output layer
-			vector
+			Returns the evaluation of the sensorInputs in the network
 		"""
+
+		if self.net is None:
+			print("No network initiated. Evaluating metering not prossible")
+			return
+
+		if self.net.shape is None:
+			print("No shape for network set. Evaluating metering not prossible")
+			return
+
+		if self.net.size is None:
+			print("No size for network set. Evaluating metering not prossible")
+			return
+
+		if self.net.weights is None:
+			print("No weights for network set. Evaluating metering not prossible")
+			return
+
+		# todo check if size matches
 
 		return self.net.evaluate(np.array(sensorInputs))
 
@@ -123,11 +158,12 @@ if __name__ == '__main__':
 
 	path = "./simulation/dataSet/track636613955649037100.txt"
 
-	sensorCar = SensorCarNetwork([3, 10, 1], path, [3, 1])
-	sensorCar.dataSet.generateTrainingTestSets([9, 1])
+	sensorCar = SensorCarController([3, 10, 1], path, [3, 1])
+	sensorCar.dataSet.prepareDataSet()
+	sensorCar.dataSet.generateTrainingTestSets()
 
-	sensorCar.getPerformance()
+	print("DeltaError: {}".format(sensorCar.getPerformance()))
 
 	sensorCar.trainNetwork()
 
-	sensorCar.getPerformance()
+	print("DeltaError: {}".format(sensorCar.getPerformance()))
