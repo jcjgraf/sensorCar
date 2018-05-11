@@ -15,11 +15,19 @@ SensorCar TODO:
     ☐ make work with n sensors @low
     ☐ create dataset folder if it does not exist @low
 
-  NeuralNetwork:
+  Main:
 
     main:
       -> .\main.py\
-    ☐ restructure code @high
+    ☐ Check if sizes match in evaluation, training etc. @high
+    ☐ improve training function @high
+
+    sensorCarController:
+      -> .\sensorCarController.py\
+    ✔ restructure code @high @done (18-05-11 23:18)
+
+
+
 
 
 
