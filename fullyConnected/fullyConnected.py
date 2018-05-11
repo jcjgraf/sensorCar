@@ -1,47 +1,56 @@
-#! /usr/bin/env python3
-
 """
-	Class represenging a fullyConnected artificial network. At initialisation a
-	list where each elements represents the number of neurons in each layer.
-	With the evaluate function a given input can be evaluated and with train the
-	network can be trained
+	FullyConnected represents a fullyConnected artificial network. At
+	initialisation a list where each elements represents the number of neurons
+	in each layer. With the evaluate function a given input can be evaluated and
+	with train the network can be trained
 """
 
 import numpy as np
 
+import os.path  # check if a file exists at a certain path
+
 
 class FullyConnected():
 	"""
-		Class represenging a fullyConnected artificial network. At
+		FullyConnected represents a fullyConnected artificial network. At
 		initialisation a list where each elements represents the number of
 		neurons in each layer. With the evaluate function a given input can be
 		evaluated and with train the network can be trained
 	"""
 
-	def __init__(self, shape):
+	shape = None
+	size = None
+	weights = None
+
+	def __init__(self, shape=False):
 		"""
-			shape is the array, where each element represents the number of
-			fully connected nodes in a specific layer.
+			Initiate network with a optional shape list, where each element
+			represents the number of fully connected nodes in a specific layer.
+			For each link weights are created at random.
+			If no shape is given the network is initiate without creating a
+			matrix network.
 		"""
 
-		self.shape = np.array(shape)
-		self.size = len(shape)
+		if shape is not False:
 
-		# TODO Gaussian Normal distribution
-		self.weights = [np.random.randn(y, x) for x, y in zip(self.shape[:-1], self.shape[1:])]
+			self.shape = np.array(shape, ndmin=2)
+			self.size = len(shape)
+
+			# TODO Gaussian Normal distribution
+			self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
 			Takes a vector with shape (1, n) as a input, transpose it to shape
 			(n, 1) evaluates it in the neural network and returns eighter the
 			ouput layer vector or a tuple containing the output vector of shape
-			(n, 1) and a matrix containing all ouputs of the neural network
+			(n, 1) and a list containing all layer's node values (as vectors)
 			depending whether getLayerValues is true or false
 		"""
 
 		layerVector = inputVector.reshape(len(inputVector), 1)
 
-		networkOutputs = [inputVector]
+		networkLayerValues = [inputVector]
 
 		# For all layers n (except in input layer) sum up the weights commecting layer n and n-1 times ouput of layer n-1 and pass the output as the new input to the next layer
 		for layerWeights in self.weights:
@@ -52,30 +61,29 @@ class FullyConnected():
 			# Apply the sigmoid function to the summed input in order to get the output of layer n
 			layerVector = self.sigmoid(summed)
 
-			networkOutputs.append(layerVector)
+			networkLayerValues.append(layerVector)
 
+		# Return eighter a tuple of just the output vector
 		if getLayerValues:
-			return (layerVector, networkOutputs)
+			return (layerVector, networkLayerValues)
 
 		return layerVector
 
-	def train(self, inputs, targetValue, learningRate=0.5):
+	def train(self, inputs, labels, learningRate=0.5):
 		"""
-			inputs in a inputlayer vector, where targetValue is a vector holding
-			the associated lables. A deltaError is calculated and the weights
+			inputs is the inputlayer vector, where labels is a vector holding
+			the associated labels. A deltaError is calculated and the weights
 			are updated. An optional learningRate can be given
 		"""
 
 		# Bring vectors to the right shape: (n, 1)
 		inputs = inputs.reshape(len(inputs), 1)
-
-		# TODO check
-		targetValue = targetValue.reshape(len(np.ravel(targetValue)), 1)
+		labels = labels.reshape(len(np.ravel(labels)), 1)
 
 		# Get the outputs tuple of the network
-		networkOutputs = self.evaluate(inputs, True)
+		networkOutputs = self.evaluate(inputs, getLayerValues=True)
 
-		networkErrors = self.backpropagate(networkOutputs[0], targetValue)
+		networkErrors = self.backpropagate(networkOutputs[0], labels)
 
 		# Iterate over the network, calculate deltaError and update the weights
 		for index in range(self.size - 1):
@@ -93,15 +101,15 @@ class FullyConnected():
 
 		# todo Check if performance improved with the new weights. If so save the new weights, if not restore the old ones
 
-	def backpropagate(self, networkOutput, targetValue):
+	def backpropagate(self, outputs, labels):
 		"""
-			Takes the realValue vector and setValue vector of the output,
+			Takes the outputs vector and labels vector of the output,
 			computes the error of the output and backpropagages it, returning a
 			list showing the error of each node
 		"""
 
 		# Calculate error at the output layer
-		error = np.array(targetValue - networkOutput)
+		error = np.array(labels - outputs)
 
 		# List containing arrays of the errors of all nodes from inputLayer to the outputLayer
 		errorVector = [error]
@@ -118,28 +126,34 @@ class FullyConnected():
 
 	def sigmoid(self, z):
 		"""
-			Applies the sigmoid function elementvise to the vector z with shape
+			Applies the sigmoid function elementwise to the vector z with shape
 			(1, n) or (n, 1) and return a vector of the same shape
 		"""
 		return 1.0 / (1.0 + np.exp(-z))
 
-	def saveWeights(self, path):
+	def saveWeights(self, fullFilePath):
 		"""
-			Saves weights as a binary file to a given path
-		"""
-
-		# TODO check if file already exists
-		print("Saving weights to {}".format(path))
-		np.save(path, self.weights)
-
-	def loadWeights(self, path):
-		"""
-			Load weights from a binary file from a given path
+			Saves weights as a binary file to the given fullFilePath.
 		"""
 
-		print("Attempting to loading weights from {}".format(path))
+		if os.path.exists(fullFilePath):
+			print("Network cannot be saved since that file already exists at that path")
+			return
+
+		np.save(fullFilePath, self.weights)
+		print("Saved weights to {}".format(fullFilePath))
+
+	def loadWeights(self, fullFilePath):
+		"""
+			Load weights from a binary file from the given fullFilePath
+		"""
+
+		print("Attempting to loading weights from {}".format(fullFilePath))
 		try:
-			self.weights = np.load(path)  # todo make sure that the loaded weights match the shape
-			print("Successfully loaded weights")
+			self.weights = np.load(fullFilePath)
+
+			# todo set self.shape and self.size according to retrieved self.weights
+			print("Successfully loaded weights and created network")
+
 		except Exception as error:
-			print("Failed to load file: {}".format(error))
+			print("Failed to load weights: {}".format(error))
