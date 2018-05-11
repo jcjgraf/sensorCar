@@ -9,3 +9,8 @@ FullyConnected:
  ☐ check if a file already exist when saving @low
  ☐ when weights are loaded make sure that everythings works properly @low
 
+DataSet:
+  -> .\dataSet.py\
+
+ ☐ Shuffle DataSet
+ ☐ make work with n sensor inputs
