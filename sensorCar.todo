@@ -19,6 +19,7 @@ SensorCar TODO:
 
     main:
       -> .\main.py\
+    ☐ restructure code @high
 
 
 
