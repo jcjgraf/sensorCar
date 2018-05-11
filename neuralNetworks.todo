@@ -12,5 +12,5 @@ FullyConnected:
 DataSet:
   -> .\dataSet.py\
 
- ☐ Shuffle DataSet
- ☐ make work with n sensor inputs
+ ☐ Shuffle DataSet @low
+ ☐ make work with n sensor inputs @low
