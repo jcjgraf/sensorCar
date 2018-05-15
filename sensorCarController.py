@@ -1,7 +1,7 @@
 """
-	SensorCarController combines the fullyConnected ANN and the dataSet in order to
-	make the sensorCar in the simulation run. Offers training functionality and
-	acts as a wrapper for fullyConnected and dataSet
+	SensorCarController combines the fullyConnected ANN and the dataSet in order
+	to make the sensorCar in the simulation run. Offers training functionality
+	and acts as a wrapper for fullyConnected and dataSet
 """
 
 import sys
