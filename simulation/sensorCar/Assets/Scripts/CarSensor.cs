@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CarSensor : MonoBehaviour {
 	// """
@@ -14,6 +15,7 @@ public class CarSensor : MonoBehaviour {
 	// """
 
 	[SerializeField] private GameObject[] sensors;
+	[SerializeField] private Text[] texts;
 
 	public List<float> distances;
 	
@@ -42,6 +44,22 @@ public class CarSensor : MonoBehaviour {
 				// Get distance between sensor head and the hit object
 				distances[i] = Vector3.Distance(position, hit.point);
 			}
+		}
+
+		displayDistance();
+	}
+
+	private void displayDistance() {
+		// """
+		// 	Display the distance in the UI
+		// """
+
+		for (int i = 0; i < texts.Length; i++) {	
+
+			// At the beginning the ui is not rendered, therefore the texts array is empty. Therefore we need a try and catch
+
+			texts[i].text = "Sensor " + i + ": " + (int)distances[i];
+
 		}
 
 	}
