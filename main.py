@@ -5,18 +5,24 @@
 """
 
 from sensorCarController import SensorCarController
+from steerServer import SteerServer
 
 
 if __name__ == '__main__':
 
 	path = "./simulation/dataSet/track636613955649037100.txt"
 
-	sensorCar = SensorCarController([3, 10, 1], path, [3, 1])
-	sensorCar.dataSet.prepareDataSet()
-	sensorCar.dataSet.generateTrainingTestSets()
+	sensorCarController = SensorCarController([3, 10, 1], path, [3, 1])
 
-	print("DeltaError: {}".format(sensorCar.getPerformance()))
+	# sensorCarController.dataSet.prepareDataSet()
+	# sensorCarController.dataSet.generateTrainingTestSets()
 
-	sensorCar.trainNetwork()
+	# print("DeltaError: {}".format(sensorCarController.getPerformance()))
 
-	print("DeltaError: {}".format(sensorCar.getPerformance()))
+	# sensorCarController.trainNetwork()
+
+	# print("DeltaError: {}".format(sensorCarController.getPerformance()))
+
+	sensorCarController.net.loadWeights("./weights/1805172358")
+
+	ss = SteerServer(sensorCarController)
