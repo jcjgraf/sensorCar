@@ -1,11 +1,25 @@
+"""
+
+"""
+
 import socketio
 from flask import Flask
 import eventlet
+import numpy as np
 
 
 class SteerServer():
+	"""
 
-	def __init__(self):
+	"""
+
+	def __init__(self, sensorCarController):
+		"""
+			Initialise steerServer with a sensorCarController which provides the
+			ability to evaluate a inputvector in the net with a provided method.
+		"""
+
+		self.sensorCarController = sensorCarController
 
 		self.sio = socketio.Server()
 		wsgiApp = Flask(__name__)
@@ -31,17 +45,22 @@ class SteerServer():
 		except KeyboardInterrupt	:
 			print("Stopping SocketServer")
 
-	def receive(data):
+	def receive(self, data):
 		"""
 			Data is the JSON object received from the simulation. Has to be
 			converted into an array and them evaluated in the net
 		"""
-		
-		# TODO convert to array
 
-		# TODO evaluate in net
+		# Convert string of json to float list
+		inputVector = np.array([float(data[key]) for key in data], dtype=float)
 
-		data = {}
+		# evaluate in net
+		outputVector = self.sensorCarController.evaluate(inputVector)
 
-		# TODO returne evaluated values to simulation
-		self.sio.emit('steer', data=data, skip_sid=True)
+		# todo make general
+
+		# TODO recheck why list in list
+		print("eval", outputVector[0][0])
+
+		# returne evaluated values to simulation
+		self.sio.emit('steer', data={'steering_angle': str(outputVector[0][0])}, skip_sid=True)
