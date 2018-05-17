@@ -2,75 +2,92 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
+using UnityStandardAssets.CrossPlatformInput;
 
-public class SocketClient : MonoBehaviour {
+namespace UnityStandardAssets.Vehicles.Car {
 
-	private SocketIOComponent socket;
-	
-	private bool doRecord = false;
+	// internal enum CarMode {
+	// 	Manual,
+	// 	Net
+	// }
 
-	Dictionary<string, string> data;
+	[RequireComponent(typeof (CarController))]
+	public class SocketClient : MonoBehaviour {
 
+		// [SerializeField] private MonoBehaviour carSensor;
 
-	public void Start()  {
-
-		socket = GetComponent<SocketIOComponent>();
-
-		socket.On("open", onOpen);
-		socket.On("error", onError);
-		socket.On("close", onClose);
-		socket.On("steer", onSteer);
+		private CarController carController;
+		private SocketIOComponent socket;
+		private CarSensor carSensor;
 		
-	}
+		private bool doRecord = false;
 
-	public void Update() {
+		Dictionary<string, string> data;
 
-		if (doRecord) {
-			doRecord = false;
 
-			// TODO collect data
+		public void Start()  {
 
-			Debug.Log("Recording data");
+			carController = GetComponent<CarController>();
+			socket = GetComponent<SocketIOComponent>();
+			carSensor = GetComponent<CarSensor>();
 
-			data = new Dictionary<string, string>();
-
-			data["s1"] = "1.23";
-			data["s2"] = "2.54";
-			data["s3"] = "12.33";
-
-			Debug.Log("Emitting data");
-
-			socket.Emit("evaluate", new JSONObject(data));
-
-			Debug.Log("Emitted data");
+			socket.On("open", onOpen);
+			socket.On("error", onError);
+			socket.On("close", onClose);
+			socket.On("steer", onSteer);		
 		}
 
-	}
+		public void Update() {
 
-	public void onOpen(SocketIOEvent obj) {
-		Debug.Log("[SocketIO] Open received: " + obj.name + " " + obj.data);
+			// TODO mode change stuff
 
-		doRecord = true;
-	}
-	
-	public void onError(SocketIOEvent obj) {
-		Debug.Log("[SocketIO] Error received: " + obj.name + " " + obj.data);
+			if (doRecord) {
+				doRecord = false;
 
-		doRecord = false;
-	}
-	
-	public void onClose(SocketIOEvent obj) {	
-		Debug.Log("[SocketIO] Close received: " + obj.name + " " + obj.data);
+				// collect data
+				data = new Dictionary<string, string>();
 
-		doRecord = false;
-	}
+				for (int i = 0; i < carSensor.distances.Count; i++) {
+					data["s" + i.ToString()] = carSensor.distances[i].ToString();
+				}
 
-	public void onSteer(SocketIOEvent obj) {
-		Debug.Log("rec");
-		Debug.Log("[SocketIO] Steer received: " + obj.name + " " + obj.data);
+				socket.Emit("evaluate", new JSONObject(data));
+			}
+
+		}
+
+		public void onOpen(SocketIOEvent obj) {
+			Debug.Log("[SocketIO] Open received: " + obj.name + " " + obj.data);
+
+			doRecord = true;
+		}
 		
-		// TODO Steer car
+		public void onError(SocketIOEvent obj) {
+			Debug.Log("[SocketIO] Error received: " + obj.name + " " + obj.data);
 
-		doRecord = true;
+			doRecord = false;
+		}
+		
+		public void onClose(SocketIOEvent obj) {	
+			Debug.Log("[SocketIO] Close received: " + obj.name + " " + obj.data);
+
+			doRecord = false;
+		}
+
+		public void onSteer(SocketIOEvent obj) {
+			Debug.Log("[SocketIO] Steer received: " + obj.name + " " + obj.data);
+			
+			// TODO Steer car
+
+			JSONObject jsonObject = obj.data;
+
+			float steering = float.Parse(jsonObject.GetField("steering_angle").str);
+
+			Debug.Log("Steering Angle: " + steering);
+
+			carController.Move(steering * 2, 0.1f, 0f, 0f);
+
+			doRecord = true;
+		}
 	}
 }
