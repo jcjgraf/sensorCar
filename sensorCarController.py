@@ -115,7 +115,7 @@ class SensorCarController():
 					labels = lineEntities[-self.dataSet.inputLabelRatio[1]:]
 
 					# Evaluate inputs
-					outputs = self.evaluateMetering(inputs)
+					outputs = self.evaluate(inputs)
 
 					# Calculate difference by calculating outputs - labels
 					differences.append(np.subtract(outputs, labels))
@@ -128,7 +128,7 @@ class SensorCarController():
 
 			return deltaError
 
-	def evaluateMetering(self, sensorInputs):
+	def evaluate(self, sensorInputs):
 		"""
 			Returns the evaluation of the sensorInputs in the network
 		"""
@@ -150,5 +150,8 @@ class SensorCarController():
 			return
 
 		# todo check if size matches
+
+		# Normalize inputs e.g. take receprocal value
+		sensorInputs = self.dataSet.normalizeInput(sensorInputs)
 
 		return self.net.evaluate(np.array(sensorInputs))
