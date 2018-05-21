@@ -35,7 +35,7 @@ class SensorCarController():
 		if dataSetPath is not False and dataSetInputLabelRatio is not False:
 			self.dataSet = DataSet(dataSetPath, dataSetInputLabelRatio)
 
-	def trainNetwork(self, epochs=1):
+	def trainNetwork(self, epochs=5):
 		"""
 			Train network, but only if a network and a a dataSet are initialized.
 			An optional epochs parameter can be given
@@ -63,6 +63,7 @@ class SensorCarController():
 		for epoch in range(epochs):
 
 			# TODO shuffle dataSet
+			print("Performance {}".format(self.getPerformance()))
 			print("Epoch {} / {}".format(epoch, epochs))
 
 			# Get the training entities line by line and train the network with them
@@ -118,7 +119,7 @@ class SensorCarController():
 					outputs = self.evaluate(inputs)
 
 					# Calculate difference by calculating outputs - labels
-					differences.append(np.subtract(outputs, labels))
+					differences.append(np.abs(np.subtract(outputs, labels)))
 
 				except Exception as e:
 					raise e

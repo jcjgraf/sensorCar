@@ -14,8 +14,6 @@ namespace UnityStandardAssets.Vehicles.Car {
 	[RequireComponent(typeof (CarController))]
 	public class SocketClient : MonoBehaviour {
 
-		// [SerializeField] private MonoBehaviour carSensor;
-
 		private CarController carController;
 		private SocketIOComponent socket;
 		private CarSensor carSensor;
@@ -76,8 +74,6 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		public void onSteer(SocketIOEvent obj) {
 			Debug.Log("[SocketIO] Steer received: " + obj.name + " " + obj.data);
-			
-			// TODO Steer car
 
 			JSONObject jsonObject = obj.data;
 
@@ -85,7 +81,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			Debug.Log("Steering Angle: " + steering);
 
-			carController.Move(steering * 2, 0.1f, 0f, 0f);
+			carController.netMove(steering * 2, 0.1f, 0f, 0f);
 
 			doRecord = true;
 		}

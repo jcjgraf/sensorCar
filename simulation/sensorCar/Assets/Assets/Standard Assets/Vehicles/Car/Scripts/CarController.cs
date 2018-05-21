@@ -174,7 +174,6 @@ namespace UnityStandardAssets.Vehicles.Car
         // NetMove
         public void netMove(float steeringAngle, float accel, float footbrake, float handbrake) {
             
-            Debug.Log("1");
             for (int i = 0; i < 4; i++) {
                 Quaternion quat;
                 Vector3 position;
