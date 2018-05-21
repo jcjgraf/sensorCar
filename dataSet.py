@@ -80,9 +80,8 @@ class DataSet():
 					labels = lineEntities[-self.inputLabelRatio[1]:]
 
 					# Scale inputs/lables
-					# divide 1 by the array, if it is a by zero division insert 0 for it
-					scaledInputs = np.divide(1, inputs, out=np.zeros_like(inputs), where=inputs != 0)
-					scaledLables = np.divide(1, labels, out=np.zeros_like(labels), where=labels != 0)
+					scaledInputs = self.normalizeInput(inputs)
+					scaledLables = self.normalizeInput(labels)
 
 					# Convert float array back to strings
 					scaledInputs = [str(i) for i in scaledInputs]
@@ -104,6 +103,14 @@ class DataSet():
 
 		# TODO Shuffle DataSet
 
+	def normalizeInput(self, vector):
+		"""
+			Normalizes the vector by return a vector with the reciprocal value
+			of each element in vector
+		"""
+
+		return np.divide(1, vector, out=np.zeros_like(vector), where=vector != 0)
+
 	def generateTrainingTestSets(self, trainingTestRatio=[9, 1]):
 		"""
 			Devides the dataSet into a training and test set by the optionally
@@ -121,19 +128,19 @@ class DataSet():
 
 		# Get the number of lines in the dataSet by iterating over it. Used for calculating the number in each set
 		numberOfLines = 0
-		with open(self.processedDataSetPath, "r") as f:
+		with open(self.rawDataSetPath, "r") as f:
 			for line in f:
 				numberOfLines += 1
 
-		self.trainingDataSetPath = self.processedDataSetPath[:self.processedDataSetPath.rfind(".")] + "_training.scl"
-		self.testDataSetPath = self.processedDataSetPath[:self.processedDataSetPath.rfind(".")] + "_test.scl"
+		self.trainingDataSetPath = self.rawDataSetPath[:self.rawDataSetPath.rfind(".")] + "_training.scl"
+		self.testDataSetPath = self.rawDataSetPath[:self.rawDataSetPath.rfind(".")] + "_test.scl"
 
 		# Get the number of elements for the training set
 		ratioSum = float(trainingTestRatio[0] + trainingTestRatio[1])
 		numberOfTraining = int(round(float(trainingTestRatio[0]) * numberOfLines / ratioSum))
 
 		# Split the dataSet according to the calculated number per set
-		with open(self.processedDataSetPath, "r") as f:
+		with open(self.rawDataSetPath, "r") as f:
 
 			for (i, line) in enumerate(f):
 				if i < numberOfTraining:
