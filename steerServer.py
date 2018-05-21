@@ -55,12 +55,12 @@ class SteerServer():
 		inputVector = np.array([float(data[key]) for key in data], dtype=float)
 
 		# evaluate in net
-		outputVector = self.sensorCarController.evaluate(inputVector)
+		outputVector = self.sensorCarController.evaluate(inputVector)[0][0]
 
 		# todo make general
 
 		# TODO recheck why list in list
-		print("eval", outputVector[0][0])
+		print("eval", outputVector)
 
 		# returne evaluated values to simulation
-		self.sio.emit('steer', data={'steering_angle': str(outputVector[0][0])}, skip_sid=True)
+		self.sio.emit('steer', data={'steering_angle': str(outputVector)}, skip_sid=True)
