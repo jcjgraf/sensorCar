@@ -167,7 +167,7 @@ namespace UnityStandardAssets.Vehicles.Car
             GearChanging();
 
             AddDownForce();
-            CheckForWheelSpin();
+            // CheckForWheelSpin();
             TractionControl();
         }
 
