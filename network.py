@@ -1,9 +1,11 @@
 """
-	Wrapperclass for nets
+	Network acts like a wrapper for an artificial neural network. (atm only
+	dff). Is used for evaluating a net. Compined with a dataSet instance it can
+	be used to train and get the performance of the net.
 """
 
 import sys
-sys.path.insert(0, './fullyConnected/')
+sys.path.insert(0, '../neuralNetworks/fullyConnected/')
 
 import numpy as np
 
@@ -52,12 +54,14 @@ class Network():
 
 				for line in trf:
 					# Split the line entities into an array and normalize it
-					lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")]))
+					lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
 
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
 					self.dff.train(inputs, labels, learningRate)
+
+				self.getPerformance()
 
 		print("Finished training during {} epochs".format(epochs))
 
@@ -92,7 +96,7 @@ class Network():
 			# Get the difference line by line and add it to the differenceSum
 			for line in tef:
 
-				lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")]))
+				lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
 
 				inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 				labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]

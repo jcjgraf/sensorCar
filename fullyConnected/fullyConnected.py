@@ -126,6 +126,10 @@ class FullyConnected():
 			Applies the sigmoid function elementwise to the vector z with shape
 			(1, n) or (n, 1) and return a vector of the same shape
 		"""
+
+		# Cast to float128 else we get an overflow error
+		z = z.astype(np.float128)
+
 		return 1.0 / (1.0 + np.exp(-z))
 
 	# def saveWeights(self, fullFilePath):
