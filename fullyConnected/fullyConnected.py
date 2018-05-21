@@ -1,5 +1,5 @@
 """
-	FullyConnected represents a fullyConnected artificial network. At
+	FullyConnected represents a deep fullyConnected artificial network (dff). At
 	initialisation a list where each elements represents the number of neurons
 	in each layer. With the evaluate function a given input can be evaluated and
 	with train the network can be trained
@@ -7,45 +7,42 @@
 
 import numpy as np
 
-import os.path  # check if a file exists at a certain path
+# import os.path  # check if a file exists at a certain path
 
 
 class FullyConnected():
 	"""
-		FullyConnected represents a fullyConnected artificial network. At
-		initialisation a list where each elements represents the number of
-		neurons in each layer. With the evaluate function a given input can be
-		evaluated and with train the network can be trained
+		FullyConnected represents a deep fullyConnected artificial network
+		(dff). At initialisation a list where each elements represents the
+		number of neurons in each layer. With the evaluate function a given
+		input can be evaluated and with train the network can be trained
 	"""
 
 	shape = None
 	size = None
 	weights = None
 
-	def __init__(self, shape=False):
+	def __init__(self, shape):
 		"""
-			Initiate network with a optional shape list, where each element
-			represents the number of fully connected nodes in a specific layer.
+			Initiate network with a shape list, where each element represents
+			the number of fully connected nodes in a specific layer.
 			For each link weights are created at random.
-			If no shape is given the network is initiate without creating a
-			matrix network.
 		"""
 
-		if shape is not False:
+		self.shape = np.array(shape, ndmin=2)
+		self.size = len(shape)
 
-			self.shape = np.array(shape, ndmin=2)
-			self.size = len(shape)
-
-			# TODO Gaussian Normal distribution
-			self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
+		# TODO Gaussian Normal distribution
+		self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
 			Takes a vector with shape (1, n) as a input, transpose it to shape
 			(n, 1) evaluates it in the neural network and returns eighter the
 			ouput layer vector or a tuple containing the output vector of shape
-			(n, 1) and a list containing all layer's node values (as vectors)
-			depending whether getLayerValues is true or false
+			(n, 1) and a list containing all layer's node values (as vectors,
+			used in the training method) depending whether getLayerValues is
+			true or false (Default is false)
 		"""
 
 		layerVector = inputVector.reshape(len(inputVector), 1)
@@ -73,7 +70,7 @@ class FullyConnected():
 		"""
 			inputs is the inputlayer vector, where labels is a vector holding
 			the associated labels. A deltaError is calculated and the weights
-			are updated. An optional learningRate can be given
+			are updated. An optional learningRate can be given (Default is 0.5)
 		"""
 
 		# Bring vectors to the right shape: (n, 1)
@@ -131,29 +128,29 @@ class FullyConnected():
 		"""
 		return 1.0 / (1.0 + np.exp(-z))
 
-	def saveWeights(self, fullFilePath):
-		"""
-			Saves weights as a binary file to the given fullFilePath.
-		"""
+	# def saveWeights(self, fullFilePath):
+	# 	"""
+	# 		Saves weights as a binary file to the given fullFilePath.
+	# 	"""
 
-		if os.path.exists(fullFilePath):
-			print("Network cannot be saved since that file already exists at that path")
-			return
+	# 	if os.path.exists(fullFilePath):
+	# 		print("Network cannot be saved since that file already exists at that path")
+	# 		return
 
-		np.save(fullFilePath, self.weights)
-		print("Saved weights to {}".format(fullFilePath))
+	# 	np.save(fullFilePath, self.weights)
+	# 	print("Saved weights to {}".format(fullFilePath))
 
-	def loadWeights(self, fullFilePath):
-		"""
-			Load weights from a binary file from the given fullFilePath
-		"""
+	# def loadWeights(self, fullFilePath):
+	# 	"""
+	# 		Load weights from a binary file from the given fullFilePath
+	# 	"""
 
-		print("Attempting to loading weights from {}".format(fullFilePath))
-		try:
-			self.weights = np.load(fullFilePath)
+	# 	print("Attempting to loading weights from {}".format(fullFilePath))
+	# 	try:
+	# 		self.weights = np.load(fullFilePath)
 
-			# todo set self.shape and self.size according to retrieved self.weights
-			print("Successfully loaded weights and created network")
+	# 		# todo set self.shape and self.size according to retrieved self.weights
+	# 		print("Successfully loaded weights and created network")
 
-		except Exception as error:
-			print("Failed to load weights: {}".format(error))
+	# 	except Exception as error:
+	# 		print("Failed to load weights: {}".format(error))

@@ -3,26 +3,28 @@
 """
 
 import sys
-
 sys.path.insert(0, './fullyConnected/')
 
 import numpy as np
-
-# import os.path  # check if a file exists at a certain path
 
 from fullyConnected import FullyConnected
 
 
 class Network():
 	"""
-		Wrapperclass for nets
+		Network acts like a wrapper for an artificial neural network. (atm only
+		dff). Is used for evaluating a net. Compined with a dataSet instance it
+		can be used to train and get the performance of the net.
 	"""
 
 	dataSet = None
 
 	def __init__(self, dffShape, dataSet=False):
 		"""
-
+			dffShape is a array where each element represents the number of
+			nodes in each layer of the dff. dataSet is an instance of DataSet.
+			When it is not provided network cannot be used to train and get the
+			performance of the net
 		"""
 		self.dff = FullyConnected(dffShape)
 
@@ -31,13 +33,14 @@ class Network():
 
 	def train(self, epochs=1, learningRate=0.3):
 		"""
-			Train dff with the trainingDataSetPath where inputLabelNumber
-			determines the number of inputvalues and labelvalues.
-			Forthermore optional epochs (default = 1) and learningRate (defualt
-			= 0.3) can be specified.
-			If no trainingDataSetPath or testDataSetPatht exist they will be
-			created
+			If a dataSet is initiated and assigned the dff is trained. An
+			optional epochs (Default is 1) and learningRate (Defualt is 0.3) can
+			be given
 		"""
+
+		if self.dataSet is None:
+			print("Training not possbile since no dataSet is asigned")
+			return
 
 		print("Training started")
 		for epoch in range(epochs):
@@ -55,8 +58,6 @@ class Network():
 					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
 					self.dff.train(inputs, labels, learningRate)
-
-				self.getPerformance()
 
 		print("Finished training during {} epochs".format(epochs))
 
@@ -97,8 +98,6 @@ class Network():
 				labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
 				outputs = self.dff.evaluate(inputs)
-
-				# print("o: {},\nl: {},\nd: {}\n{}".format(outputs, labels, np.abs(np.subtract(outputs, labels)), 15 * "-"))
 
 				differenceSum += np.abs(np.subtract(outputs, labels))
 

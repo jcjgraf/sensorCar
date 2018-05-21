@@ -40,11 +40,14 @@ class DataSet():
 
 			# Assign them to attribute if they exists
 			if os.path.exists(trainingDataSetPath) and os.path.exists(testDataSetPath):
+
+				print("trainingDataSetPath and testDataSetPath exist, assigning them to attributes")
+
 				self.trainingDataSetPath = trainingDataSetPath
 				self.testDataSetPath = testDataSetPath
 
 			# Generate them if they do not exists yet
-			if self.trainingDataSetPath is not None and self.testDataSetPath is not None:
+			else:
 				self.splitDataSet()
 
 		else:
@@ -64,6 +67,8 @@ class DataSet():
 			which are saved in the same path as the fullDataSetPath but with the
 			ending "_training.txt" resp. "_test.txt".
 		"""
+
+		print("Splitting fullDataSetPath into trainingDataSetPath and testDataSetPath")
 
 		# Get number of lines(=data) in the fullDataSetPath
 		numberOfLines = 0
@@ -91,32 +96,4 @@ class DataSet():
 					with open(self.testDataSetPath, "a") as tef:
 						tef.write(line)
 
-			print("Created training and test dataSet")
-
-	# def getInputLableEntities(self, lineNumber):
-	# 	"""
-	# 		Loads the line at lineNumber of the dataSet file and returns a tule
-	# 		containing an vector of inputs and an lable vector if
-	# 		trainingDataSetPath exists.
-	# 		False is returned when the lineNumber is "out of range" or
-	# 		trainingDataSetPath does not exist.
-	# 	"""
-
-	# 	if self.trainingDataSetPath is None:
-	# 		print("trainingDataSet does not exist. Not possible to retrieve entities")
-	# 		return False
-
-	# 	# Get line at specific index
-	# 	line = linecache.getline(self.trainingDataSetPath, lineNumber)  # Returns "" in when the "index is out of range"
-	# 	linecache.clearcache()
-
-	# 	if line == "":  # When "index out pf range" an empty string is returned
-	# 		return False
-
-	# 	# Create arrays of the line entities. Convert str to float
-	# 	lineEntity = np.array([float(i) for i in line.split("\t")])
-
-	# 	inputs = lineEntity[:self.inputLabelNumber[0]]
-	# 	labels = lineEntity[-self.inputLabelNumber[1]:]
-
-	# 	return (inputs, labels)
+			print("Done creating training and test dataSet")
