@@ -56,7 +56,7 @@ function record(doRecord) {
 
 	while (isRecording) {
 
-		var distances = carSensor.getDistance();
+		var distances = carSensor.distances;
 		var steerAngle = carController.CurrentSteerAngle;
 
 		// TODO make work with n sensors
