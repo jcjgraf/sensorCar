@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
@@ -46,8 +47,17 @@ namespace UnityStandardAssets.Vehicles.Car {
 				data = new Dictionary<string, string>();
 
 				for (int i = 0; i < carSensor.distances.Count; i++) {
-					data["s" + i.ToString()] = carSensor.distances[i].ToString();
+
+					if (float.IsInfinity(carSensor.distances[i])) {
+						doRecord = true;
+						return;
+
+					} else {
+						data["s" + i.ToString()] = carSensor.distances[i].ToString();
+					}
 				}
+
+				Debug.Log(new JSONObject(data));
 
 				socket.Emit("evaluate", new JSONObject(data));
 			}
@@ -75,13 +85,19 @@ namespace UnityStandardAssets.Vehicles.Car {
 		public void onSteer(SocketIOEvent obj) {
 			Debug.Log("[SocketIO] Steer received: " + obj.name + " " + obj.data);
 
-			JSONObject jsonObject = obj.data;
+			// Retrieve json and converte to 
+			JSONObject jsonData = obj.data;
 
-			float steering = float.Parse(jsonObject.GetField("steering_angle").str);
+			string jsonString = jsonData.GetField("steering_angle").str;
+
+			float steering = float.Parse(jsonString);
 
 			Debug.Log("Steering Angle: " + steering);
 
-			carController.netMove(steering * 2, 0.1f, 0f, 0f);
+			float v = CrossPlatformInputManager.GetAxis("Vertical");
+
+			carController.netMove(steering, v, v, 0.0f);
+			// carController.netMove(25, 0.1f, 0.0f, 0.0f);
 
 			doRecord = true;
 		}

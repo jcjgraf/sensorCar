@@ -4,25 +4,26 @@
 	Main script of the sensorCar project
 """
 
+import sys
+sys.path.insert(0, '../neuralNetworks/')
+
+from network import Network
+from dataSet import DataSet
+
 from sensorCarController import SensorCarController
-from steerServer import SteerServer
 
 
 if __name__ == '__main__':
 
-	path = "./simulation/dataSet/track636613955649037100.txt"
+	path = "./simulation/dataSet/track636614043698560200.txt"
 
-	sensorCarController = SensorCarController([3, 10, 1], path, [3, 1])
+	dataSet = DataSet(path, [3, 1], [1, 1])
+	network = Network([3, 10, 1], dataSet)
 
-	# sensorCarController.dataSet.prepareDataSet()
-	# sensorCarController.dataSet.generateTrainingTestSets()
+	sensorCarController = SensorCarController(network)
 
-	# print("DeltaError: {}".format(sensorCarController.getPerformance()))
+	sensorCarController.network.getPerformance()
+	sensorCarController.network.train(epochs=2, learningRate=0.5)
+	sensorCarController.network.getPerformance()
 
-	# sensorCarController.trainNetwork()
-
-	# print("DeltaError: {}".format(sensorCarController.getPerformance()))
-
-	sensorCarController.net.loadWeights("./weights/1805172358")
-
-	ss = SteerServer(sensorCarController)
+	sensorCarController.startServer()
