@@ -4,7 +4,7 @@
 """
 
 import numpy as np
-import linecache  # Get a specific line of a file
+# import linecache  # Get a specific line of a file
 
 import os.path  # check if a file exists at a certain path
 
@@ -15,93 +15,40 @@ class DataSet():
 		dataSets entires to other classes for training of the network.
 	"""
 
-	rawDataSetPath = None
-	inputLabelRatio = None
-	processedDataSetPath = None
+	fullDataSetPath = None
 	trainingDataSetPath = None
 	testDataSetPath = None
 
-	def __init__(self, rawDataSetPath, inputLabelRatio):
+	def __init__(self, fullDataSetPath, inputLabelNumber, trainingTestRatio=[9, 1]):
 		"""
-			Initiate dataSet with a path to the rawDataSet and an array
-			representing the ration between inputs and lables
+			Initiate dataSet with a fullDataSetPath, inputLabelNumber an array
+			representing the ration between inputs and lables. Optionally a
+			trainingTestRatio array cen be given which determines the ration
+			between training and test data. Default is 9:1
 		"""
+
+		self.inputLabelNumber = inputLabelNumber
+		self.trainingTestRatio = trainingTestRatio
+
 		# Check if path is valid and file exists
-		if os.path.exists(rawDataSetPath):
-			self.rawDataSetPath = rawDataSetPath
-		else:
-			print("Given path is invalid. Reasign right path to attribute")
+		if os.path.exists(fullDataSetPath):
+			self.fullDataSetPath = fullDataSetPath
 
-		self.inputLabelRatio = inputLabelRatio
+			# Check if the trainingDataSetPath and testDataSetPath file already exists
+			trainingDataSetPath = self.fullDataSetPath[:self.fullDataSetPath.rfind(".")] + "_training.txt"
+			testDataSetPath = self.fullDataSetPath[:self.fullDataSetPath.rfind(".")] + "_test.txt"
 
-		# Check if the processedDataSet already exists. If so check if the training- and testDataSet already exist
-		# Add for the existing ones the path string as an attribut
-		processedDataSetPath = rawDataSetPath[:rawDataSetPath.rfind(".")] + ".scl"
-
-		if os.path.exists(processedDataSetPath):
-			self.processedDataSetPath = processedDataSetPath
-
-			trainingDataSetPath = rawDataSetPath[:rawDataSetPath.rfind(".")] + "_training.scl"
-			testDataSetPath = rawDataSetPath[:rawDataSetPath.rfind(".")] + "_test.scl"
-
+			# Assign them to attribute if they exists
 			if os.path.exists(trainingDataSetPath) and os.path.exists(testDataSetPath):
 				self.trainingDataSetPath = trainingDataSetPath
 				self.testDataSetPath = testDataSetPath
 
-	def prepareDataSet(self):
-		"""
-			If no prepared dataSet exists, load the rawDataSet line by line
-			and procss this line before saving it to the processedDataSet
-			It the moment the procession only includes normalisation
-		"""
+			# Generate them if they do not exists yet
+			if self.trainingDataSetPath is not None and self.testDataSetPath is not None:
+				self.splitDataSet()
 
-		# If processedDataSetPath is defined, then there is already a processed dataset
-		# There is no need for redoing this. Thus we return
-		if self.prepareDataSet is not None:
-			print("Prepared dataSet does already exist. No need for recreation.")
-			return
-
-		print("Preparing dataSet")
-
-		# Scale DataSet
-		# Open file and process it line by line
-		with open(self.rawDataSetPath, "r") as f:
-
-			print("Normalising dataSet")
-
-			for line in f:
-
-				# An error is thrown when there is an empty line in the dataSet
-				try:
-
-					# split line entites into inputs and labels array
-					lineEntities = np.array([float(i) for i in line.split("\t")])
-					inputs = lineEntities[:self.inputLabelRatio[0]]
-					labels = lineEntities[-self.inputLabelRatio[1]:]
-
-					# Scale inputs/lables
-					scaledInputs = self.normalizeInput(inputs)
-					scaledLables = self.normalizeInput(labels)
-
-					# Convert float array back to strings
-					scaledInputs = [str(i) for i in scaledInputs]
-					scaledLables = [str(i) for i in scaledLables]
-
-					# todo make general
-					scaledLine = scaledInputs[0] + "\t" + scaledInputs[1] + "\t" + scaledInputs[2] + "\t" + scaledLables[0] + "\n"
-
-					# Save new line to file
-					with open(self.processedDataSetPath, "a") as fn:
-						fn.write(scaledLine)
-
-				except Exception as e:
-					raise e
-
-			print("Finished normalisation")
-
-		print("DataSet is ready")
-
-		# TODO Shuffle DataSet
+		else:
+			print("Given path is invalid. Reasign right path to attribute")
 
 	def normalizeInput(self, vector):
 		"""
@@ -111,72 +58,65 @@ class DataSet():
 
 		return np.divide(1, vector, out=np.zeros_like(vector), where=vector != 0)
 
-	def generateTrainingTestSets(self, trainingTestRatio=[9, 1]):
+	def splitDataSet(self):
 		"""
-			Devides the dataSet into a training and test set by the optionally
-			given trainingTestRatio which is an array of two elements.
-			Default is [9, 1] meaning 9/10 training and 1/10 testing
+			Split the fullDataSetPath by the trainingTestRation into two files,
+			which are saved in the same path as the fullDataSetPath but with the
+			ending "_training.txt" resp. "_test.txt".
 		"""
 
-		# If trainingDataSetPath and testDataSetPath is defined, then these two sets already exist
-		# There is no need for redoing this. Thus we return
-		if self.trainingDataSetPath is not None and self.testDataSetPath is not None:
-			print("Training and testDataSet do already exist. No need for recreation.")
-			return
-
-		print("Generating training and test dataSet")
-
-		# Get the number of lines in the dataSet by iterating over it. Used for calculating the number in each set
+		# Get number of lines(=data) in the fullDataSetPath
 		numberOfLines = 0
-		with open(self.rawDataSetPath, "r") as f:
-			for line in f:
+
+		with open(self.fullDataSetPath, "r") as ff:
+			for line in ff:
 				numberOfLines += 1
 
-		self.trainingDataSetPath = self.rawDataSetPath[:self.rawDataSetPath.rfind(".")] + "_training.scl"
-		self.testDataSetPath = self.rawDataSetPath[:self.rawDataSetPath.rfind(".")] + "_test.scl"
+		self.trainingDataSetPath = self.fullDataSetPath[:self.fullDataSetPath.rfind(".")] + "_training.txt"
+		self.testDataSetPath = self.fullDataSetPath[:self.fullDataSetPath.rfind(".")] + "_test.txt"
 
-		# Get the number of elements for the training set
-		ratioSum = float(trainingTestRatio[0] + trainingTestRatio[1])
-		numberOfTraining = int(round(float(trainingTestRatio[0]) * numberOfLines / ratioSum))
+		# Get the number of elements for the training set (testset equals the remainder)
+		splitRatioSum = float(self.trainingTestRatio[0] + self.trainingTestRatio[1])
+		numberTrainingEntities = int(round(float(self.trainingTestRatio[0]) * numberOfLines / splitRatioSum))
 
-		# Split the dataSet according to the calculated number per set
-		with open(self.rawDataSetPath, "r") as f:
+		# Split the entites of the fullDataSetPath into the two files
+		with open(self.fullDataSetPath, "r") as ff:
 
-			for (i, line) in enumerate(f):
-				if i < numberOfTraining:
-					with open(self.trainingDataSetPath, "a") as tr:
-						tr.write(line)
+			for (i, line) in enumerate(ff):
+				if i < numberTrainingEntities:
+					with open(self.trainingDataSetPath, "a") as trf:
+						trf.write(line)
 
-				if i >= numberOfTraining:
-					with open(self.testDataSetPath, "a") as te:
-						te.write(line)
+				if i >= numberTrainingEntities:
+					with open(self.testDataSetPath, "a") as tef:
+						tef.write(line)
 
 			print("Created training and test dataSet")
 
-	def getInputLableEntities(self, lineNumber):
-		"""
-			Loads the line at lineNumber of the dataSet file and returns a tule
-			containing an vector of inputs and an lable vector if
-			trainingDataSetPath exists.
-			False is returned when the lineNumber is "out of range" or
-			trainingDataSetPath does not exist.
-		"""
+	# def getInputLableEntities(self, lineNumber):
+	# 	"""
+	# 		Loads the line at lineNumber of the dataSet file and returns a tule
+	# 		containing an vector of inputs and an lable vector if
+	# 		trainingDataSetPath exists.
+	# 		False is returned when the lineNumber is "out of range" or
+	# 		trainingDataSetPath does not exist.
+	# 	"""
 
-		if self.trainingDataSetPath is None:
-			print("trainingDataSet does not exist. Not possible to retrieve entities")
-			return False
+	# 	if self.trainingDataSetPath is None:
+	# 		print("trainingDataSet does not exist. Not possible to retrieve entities")
+	# 		return False
 
-		# Get line at specific index
-		line = linecache.getline(self.trainingDataSetPath, lineNumber)  # Returns "" in when the "index is out of range"
-		linecache.clearcache()
+	# 	# Get line at specific index
+	# 	line = linecache.getline(self.trainingDataSetPath, lineNumber)  # Returns "" in when the "index is out of range"
+	# 	linecache.clearcache()
 
-		if line == "":  # When "index out pf range" an empty string is returned
-			return False
+	# 	if line == "":  # When "index out pf range" an empty string is returned
+	# 		return False
 
-		# Create arrays of the line entities. Convert str to float
-		lineEntity = np.array([float(i) for i in line.split("\t")])
+	# 	# Create arrays of the line entities. Convert str to float
+	# 	lineEntity = np.array([float(i) for i in line.split("\t")])
 
-		inputs = lineEntity[:self.inputLabelRatio[0]]
-		labels = lineEntity[-self.inputLabelRatio[1]:]
+	# 	inputs = lineEntity[:self.inputLabelNumber[0]]
+	# 	labels = lineEntity[-self.inputLabelNumber[1]:]
 
-		return (inputs, labels)
+	# 	return (inputs, labels)
