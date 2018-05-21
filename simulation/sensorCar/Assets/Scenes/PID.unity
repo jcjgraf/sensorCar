@@ -113,11 +113,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &18171166 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1438476077461094, guid: b07cdf048f56141078c833e29d6b1ac9,
-    type: 2}
-  m_PrefabInternal: {fileID: 1761491790}
 --- !u!1 &82657902
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,7 +393,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &198806406
 GameObject:
@@ -687,6 +682,11 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
+--- !u!1 &311758053 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1062940203016242, guid: b07cdf048f56141078c833e29d6b1ac9,
+    type: 2}
+  m_PrefabInternal: {fileID: 1761491790}
 --- !u!1 &322995973
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,10 +812,9 @@ GameObject:
   - component: {fileID: 430836923}
   - component: {fileID: 430836922}
   - component: {fileID: 430836921}
-  - component: {fileID: 430836920}
-  - component: {fileID: 430836926}
-  - component: {fileID: 430836927}
   - component: {fileID: 430836928}
+  - component: {fileID: 430836926}
+  - component: {fileID: 430836920}
   m_Layer: 0
   m_Name: CarWaypointBased
   m_TagString: Player
@@ -830,7 +829,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 430836919}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20fa55eb64c5cea4aa3c71ae19c434bf, type: 3}
   m_Name: 
@@ -850,15 +849,26 @@ MonoBehaviour:
 --- !u!114 &430836921
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400024, guid: 0fb4610dba67fc24cb2a6674fb155fc1,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 430836919}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: ab07d2c87200548a397403dd07994f07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensors:
+  - {fileID: 1772040682}
+  - {fileID: 1727987296}
+  - {fileID: 311758053}
+  texts:
+  - {fileID: 756349599}
+  - {fileID: 976375841}
+  - {fileID: 1507418559}
+  distances:
+  - 0
+  - 0
+  - 0
 --- !u!114 &430836922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -871,7 +881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d963df58504b69045b8d0d746ba6f777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CautiousSpeedFactor: 0.15
+  m_CautiousSpeedFactor: 0.05
   m_CautiousMaxAngle: 180
   m_CautiousMaxDistance: 100
   m_CautiousAngularVelocityFactor: 30
@@ -879,7 +889,7 @@ MonoBehaviour:
   m_AccelSensitivity: 1
   m_BrakeSensitivity: 1
   m_LateralWanderDistance: 3
-  m_LateralWanderSpeed: 0.2
+  m_LateralWanderSpeed: 0.02
   m_AccelWanderAmount: 0.1
   m_AccelWanderSpeed: 0.1
   m_BrakeCondition: 2
@@ -928,6 +938,7 @@ MonoBehaviour:
   m_RevRangeBoundary: 1
   m_SlipLimit: 0.4
   m_BrakeTorque: 20000
+  m_SteerAngle: 0
 --- !u!54 &430836924
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -984,23 +995,6 @@ MonoBehaviour:
   progressStyle: 0
   pointToPointThreshold: 4
   target: {fileID: 1582196715}
---- !u!114 &430836927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 430836919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e15be3d3efa0489d8e202e6909889c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sensors:
-  - {fileID: 1428185812}
-  - {fileID: 18171166}
-  - {fileID: 649377021}
-  texts: []
-  distances: []
 --- !u!114 &430836928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1012,11 +1006,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c05e8fcce294481eab3eca5bf4cf926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePath: /Users/JeanClaude/Documents/Programming/selfdrivingCar/neuralNetwork/sensorCar/dataset/
-  fileName: track.txt
+  filePath: /Users/JeanClaude/Documents/Programming/matriculationProject/practical/sensorCar/simulation/dataset/
+  fileName: track
   isRecording: 0
-  recordTimeInterval: 0.2
-  carSensor: {fileID: 430836927}
+  recordTimeInterval: 0.1
+  carSensor: {fileID: 430836921}
   carController: {fileID: 430836923}
 --- !u!1 &555293968
 GameObject:
@@ -1148,11 +1142,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e52935e092dcb484199f7025278823f6, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &649377021 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1062940203016242, guid: b07cdf048f56141078c833e29d6b1ac9,
-    type: 2}
-  m_PrefabInternal: {fileID: 1761491790}
 --- !u!1 &745861984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,6 +1173,12 @@ Transform:
   m_Father: {fileID: 430836925}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &756349599 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114740654020319306, guid: e52935e092dcb484199f7025278823f6,
+    type: 2}
+  m_PrefabInternal: {fileID: 627279010}
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &759248603
 GameObject:
   m_ObjectHideFlags: 0
@@ -4781,6 +4776,12 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
+--- !u!114 &976375841 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114744643923330728, guid: e52935e092dcb484199f7025278823f6,
+    type: 2}
+  m_PrefabInternal: {fileID: 627279010}
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &1018499865
 GameObject:
   m_ObjectHideFlags: 0
@@ -5258,7 +5259,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4814085656931458, guid: 98f19584b757d40efa640776da71666c, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4449196159755110, guid: 98f19584b757d40efa640776da71666c, type: 2}
       propertyPath: m_LocalPosition.x
@@ -5759,11 +5760,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1392679659}
   m_Mesh: {fileID: 4300042, guid: e6fec471c20b9d148b1f87910e67bea4, type: 3}
---- !u!1 &1428185812 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1498145871115350, guid: b07cdf048f56141078c833e29d6b1ac9,
-    type: 2}
-  m_PrefabInternal: {fileID: 1761491790}
 --- !u!1 &1436846230
 GameObject:
   m_ObjectHideFlags: 0
@@ -5838,6 +5834,12 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1436846230}
   m_Mesh: {fileID: 4300060, guid: e6fec471c20b9d148b1f87910e67bea4, type: 3}
+--- !u!114 &1507418559 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114813531703461260, guid: e52935e092dcb484199f7025278823f6,
+    type: 2}
+  m_PrefabInternal: {fileID: 627279010}
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &1582196714
 GameObject:
   m_ObjectHideFlags: 0
@@ -6179,6 +6181,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1680454954}
   m_Mesh: {fileID: 4300032, guid: e6fec471c20b9d148b1f87910e67bea4, type: 3}
+--- !u!1 &1727987296 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1438476077461094, guid: b07cdf048f56141078c833e29d6b1ac9,
+    type: 2}
+  m_PrefabInternal: {fileID: 1761491790}
 --- !u!1001 &1761491790
 Prefab:
   m_ObjectHideFlags: 0
@@ -6221,6 +6228,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b07cdf048f56141078c833e29d6b1ac9, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1772040682 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1498145871115350, guid: b07cdf048f56141078c833e29d6b1ac9,
+    type: 2}
+  m_PrefabInternal: {fileID: 1761491790}
 --- !u!114 &1774590715 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114995638191152650, guid: 98f19584b757d40efa640776da71666c,
