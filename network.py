@@ -54,10 +54,15 @@ class Network():
 
 				for line in trf:
 					# Split the line entities into an array and normalize it
-					lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
+
+					# lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
+
+					lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
-					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
+
+					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
+					labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:]) / 26
 
 					self.dff.train(inputs, labels, learningRate)
 
@@ -65,10 +70,24 @@ class Network():
 
 		print("Finished training during {} epochs".format(epochs))
 
-	def evaluate(self, inputVector):
+	def evaluate(self, inputVector, normalize=False):
 		"""
 			Evaluates a given inputVector in the dff and returns the ouputVector
 		"""
+
+		if normalize:
+			# Normalize input
+			# inputVector = self.normalize(inputVector)
+
+			# Evaluate
+			outputVector = self.dff.evaluate(inputVector)
+
+			print(outputVector)
+
+			return 26 * outputVector
+
+			# Normalize output
+			return self.normalize(outputVector)
 
 		return self.dff.evaluate(inputVector)
 
@@ -96,12 +115,16 @@ class Network():
 			# Get the difference line by line and add it to the differenceSum
 			for line in tef:
 
-				lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
+				# lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
+
+				lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
 				inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
-				labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
-				outputs = self.dff.evaluate(inputs)
+				# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
+				labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:]) / 26
+
+				outputs = self.dff.evaluate(inputs)[0][0]
 
 				differenceSum += np.abs(np.subtract(outputs, labels))
 
