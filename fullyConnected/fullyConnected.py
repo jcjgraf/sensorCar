@@ -7,8 +7,6 @@
 
 import numpy as np
 
-# import os.path  # check if a file exists at a certain path
-
 
 class FullyConnected():
 	"""
@@ -140,30 +138,3 @@ class FullyConnected():
 		return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))  # tanh
 
 		# return 1.0 / (1.0 + np.exp(-z))  # Sigmoid
-
-	# def saveWeights(self, fullFilePath):
-	# 	"""
-	# 		Saves weights as a binary file to the given fullFilePath.
-	# 	"""
-
-	# 	if os.path.exists(fullFilePath):
-	# 		print("Network cannot be saved since that file already exists at that path")
-	# 		return
-
-	# 	np.save(fullFilePath, self.weights)
-	# 	print("Saved weights to {}".format(fullFilePath))
-
-	# def loadWeights(self, fullFilePath):
-	# 	"""
-	# 		Load weights from a binary file from the given fullFilePath
-	# 	"""
-
-	# 	print("Attempting to loading weights from {}".format(fullFilePath))
-	# 	try:
-	# 		self.weights = np.load(fullFilePath)
-
-	# 		# todo set self.shape and self.size according to retrieved self.weights
-	# 		print("Successfully loaded weights and created network")
-
-	# 	except Exception as error:
-	# 		print("Failed to load weights: {}".format(error))

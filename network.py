@@ -9,6 +9,7 @@ sys.path.insert(0, '../neuralNetworks/fullyConnected/')
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 from fullyConnected import FullyConnected
 
@@ -147,3 +148,23 @@ class Network():
 				numberOfLines += 1
 
 			print("The mean difference is {}".format(differenceSum / numberOfLines))
+
+	def save(self, filePath):
+		"""
+			Save the instance of this class to the given filePath
+		"""
+
+		print("Saving network instance to {}".format(filePath))
+
+		with open(filePath, "wb") as f:
+			f.write(pickle.dumps(self.__dict__))
+
+	def load(self, filePath):
+		"""
+			Load the instance of this class from the given filePath
+		"""
+
+		print("Loading network instance from {}".format(filePath))
+
+		with open(filePath, "rb") as f:
+			self.__dict__ = pickle.load(f)
