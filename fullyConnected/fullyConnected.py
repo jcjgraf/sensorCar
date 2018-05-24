@@ -100,6 +100,9 @@ class FullyConnected():
 
 			self.weights[len(self.weights) - 1 - index] -= deltaWeight
 
+		# Return cost
+		return (networkOutputs[0] - labels)**2
+
 		# todo Check if performance improved with the new weights. If so save the new weights, if not restore the old ones
 
 	def backpropagate(self, outputs, labels):

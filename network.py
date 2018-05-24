@@ -52,6 +52,9 @@ class Network():
 			# Read trainingfile and train on it line by line
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
 
+				costSum = 0
+				numberOfLines = 0
+
 				for line in trf:
 					# Split the line entities into an array and normalize it
 
@@ -64,9 +67,11 @@ class Network():
 					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
 					labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:]) / 26
 
-					self.dff.train(inputs, labels, learningRate)
+					costSum += self.dff.train(inputs, labels, learningRate)
 
-				self.getPerformance()
+					numberOfLines += 1
+
+				print("cost: {}".format(costSum / numberOfLines))
 
 		print("Finished training during {} epochs".format(epochs))
 

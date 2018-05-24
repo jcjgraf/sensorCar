@@ -97,3 +97,50 @@ class DataSet():
 						tef.write(line)
 
 			print("Done creating training and test dataSet")
+
+	def getStats(self):
+		"""
+			Analyses the dataset and gives the following statis about it:
+			Extrema of each collumn, mean of each collumn
+		"""
+
+		print("Analysing dataset")
+
+		with open(self.fullDataSetPath, "r") as ff:
+
+			# Get the first line in order to get the number of columns and set the extrema to the values of the first line
+			firstLine = ff.readline().strip()
+			firstLineEntities = np.array([float(i) for i in firstLine.split("\t")], dtype=np.float128)
+
+			numberOfColumns = firstLine.count("\t") + 1
+
+			# Holds the max value of each column in the first matrix row and the min value in the second row
+			# For initialisation set the firstLine's entities as the extremas
+			extremaVector = np.array([firstLineEntities, firstLineEntities], dtype=np.float128)
+
+			# Holds the sum of each column
+			sumVector = np.zeros(numberOfColumns)
+
+			numberOfLines = 0
+
+			# Get one line after another
+			for line in ff:
+
+				lineEntities = np.array([float(i) for i in line.split("\t")])
+
+				sumVector = np.add(lineEntities, sumVector)
+
+				# Check each entity if it is a extrema and assign it to the extremaVector if so
+				for (i, entity) in enumerate(lineEntities):
+
+					# If max
+					if entity > extremaVector[0][i]:
+						extremaVector[0][i] = entity
+
+					# If min
+					if entity < extremaVector[1][i]:
+						extremaVector[1][i] = entity 
+
+				numberOfLines += 1
+
+		print("NumberOfColumns: {0},\nMaxValue: {1},\nMinValue: {2},\nNumberOfLines: {3},\nMeanValue: {4}".format(numberOfColumns, extremaVector[0], extremaVector[1], numberOfLines, np.divide(sumVector, numberOfLines)))
