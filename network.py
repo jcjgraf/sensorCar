@@ -8,6 +8,7 @@ import sys
 sys.path.insert(0, '../neuralNetworks/fullyConnected/')
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from fullyConnected import FullyConnected
 
@@ -41,10 +42,14 @@ class Network():
 		"""
 
 		if self.dataSet is None:
-			print("Training not possbile since no dataSet is asigned")
+			print("Training not possbile since no dataSet is assigned")
 			return
 
 		print("Training started")
+
+		# Holds the cost value of each epoch
+		costList = []
+
 		for epoch in range(epochs):
 
 			print("Epoch {}/{}".format(epoch + 1, epochs))
@@ -64,35 +69,40 @@ class Network():
 
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 
+# todo Normalisation
 					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
-					labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:]) / 26
+					labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:])
 
 					costSum += self.dff.train(inputs, labels, learningRate)
 
 					numberOfLines += 1
 
+				costList.append(costSum[0][0] / numberOfLines)
+
 				print("cost: {}".format(costSum / numberOfLines))
 
 		print("Finished training during {} epochs".format(epochs))
+
+		plt.plot(costList)
+		plt.show()
 
 	def evaluate(self, inputVector, normalize=False):
 		"""
 			Evaluates a given inputVector in the dff and returns the ouputVector
 		"""
 
-		if normalize:
-			# Normalize input
-			# inputVector = self.normalize(inputVector)
+# todo Normalisation
+		# if normalize:
+		# 	# Normalize input
+		# 	# inputVector = self.normalize(inputVector)
 
-			# Evaluate
-			outputVector = self.dff.evaluate(inputVector)
+		# 	# Evaluate
+		# 	outputVector = self.dff.evaluate(inputVector)
 
-			print(outputVector)
+		# 	return outputVector
 
-			return 26 * outputVector
-
-			# Normalize output
-			return self.normalize(outputVector)
+		# 	# Normalize output
+		# 	return self.normalize(outputVector)
 
 		return self.dff.evaluate(inputVector)
 
@@ -126,8 +136,9 @@ class Network():
 
 				inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 
+# todo Normalisation
 				# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
-				labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:]) / 26
+				labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:])
 
 				outputs = self.dff.evaluate(inputs)[0][0]
 
