@@ -8,8 +8,8 @@ import sys
 sys.path.insert(0, '../neuralNetworks/fullyConnected/')
 
 import numpy as np
-import matplotlib.pyplot as plt
-import pickle
+import pickle  # Save instance of class
+import time  # Measure time
 
 from fullyConnected import FullyConnected
 
@@ -35,25 +35,39 @@ class Network():
 		if dataSet is not False:
 			self.dataSet = dataSet
 
-	def train(self, epochs=1, learningRate=0.3):
+	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
 		"""
 			If a dataSet is initiated and assigned the dff is trained. An
 			optional epochs (Default is 1) and learningRate (Defualt is 0.3) can
-			be given
+			be given. Verbosity determines the number of epochs after which some
+			information is printed out.
+			Returns a list containing all costfunction values of each epoch
 		"""
 
+		# Check if training possible
 		if self.dataSet is None:
 			print("Training not possbile since no dataSet is assigned")
 			return
 
-		print("Training started")
+		print("{0}\nTraining started\nnumberOfEpochs: {1}".format(15 * "-", epochs))
 
-		# Holds the cost value of each epoch
-		costList = []
+		trainingStart = time.time()  # Used for calculating used time
+		costList = []  # Holds the cost value of each epoch
 
 		for epoch in range(epochs):
 
-			print("Epoch {}/{}".format(epoch + 1, epochs))
+			# Used to determine whether this epoch data should be printed / saved
+			doPrint = False
+			doSave = False
+
+			if verbosity is not 0 and ((epoch + 1) % verbosity == 0 or epoch == 0):
+				doPrint = True
+
+			if saveNet is not None and savePath is not None and (epoch + 1) % saveNet == 0:
+				doSave = True
+
+			if doPrint:
+				print("{2}\nEpoch {0}/{1}".format(epoch + 1, epochs, 15 * "-"))
 
 			# Read trainingfile and train on it line by line
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
@@ -61,31 +75,55 @@ class Network():
 				costSum = 0
 				numberOfLines = 0
 
+				dEpochTrainingTime = 0
+				dPrintTrainingTime = 0
+				dEpochCost = 0
+				dPrintCost = 0
+
 				for line in trf:
 					# Split the line entities into an array and normalize it
+					lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
 					# lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
-
-					lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 
 # todo Normalisation
 					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
-					labels = (lineEntities[-self.dataSet.inputLabelNumber[1]:])
+
+					# vector = lineEntities[-self.dataSet.inputLabelNumber[1]:]
+					# labels = 0.5 * self.dff.sigmoid(vector)
+
+					labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
 
 					costSum += self.dff.train(inputs, labels, learningRate)
 
 					numberOfLines += 1
 
-				costList.append(costSum[0][0] / numberOfLines)
+			costList.append(costSum[0][0] / numberOfLines)
 
-				print("cost: {}".format(costSum / numberOfLines))
+			# Var for print
+			cost = costSum / numberOfLines
 
-		print("Finished training during {} epochs".format(epochs))
+			dEpochTrainingTime = time.time() - dEpochTrainingTime
+			print(time.time(), dEpochTrainingTime)
+			dEpochCost = dEpochCost - cost
 
-		plt.plot(costList)
-		plt.show()
+			if doPrint:
+
+				totalTrainingTime = time.time() - trainingStart
+				dPrintTrainingTime = time.time() - dPrintTrainingTime
+
+				dPrintCost = dPrintCost - cost
+
+				print("totalTrainingTime:\t{},\ndEpochTrainingTime:\t{},\ndPrintTrainingTime:\t{},\ncost:\t{},\ndEpochCost:\t{},\ndPrintCost:\t{}".format(totalTrainingTime, dEpochTrainingTime, dPrintTrainingTime, cost, dEpochCost, dPrintCost))
+
+			if doSave:
+				self.save(savePath + str(epoch + 1) + ".txt")
+
+		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - trainingStart, costList[-1]))
+
+		return costList
 
 	def evaluate(self, inputVector, normalize=False):
 		"""
@@ -131,7 +169,7 @@ class Network():
 			# Get the difference line by line and add it to the differenceSum
 			for line in tef:
 
-				# lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
+				# lineEntities = self.normalize(np.array([float(i) for i in line.sit("\t")], dtype=np.float128))
 
 				lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
@@ -153,7 +191,7 @@ class Network():
 		"""
 			Save the instance of this class to the given filePath
 		"""
-
+# todo create dir if not available
 		print("Saving network instance to {}".format(filePath))
 
 		with open(filePath, "wb") as f:
