@@ -7,8 +7,6 @@
 
 import numpy as np
 
-# import os.path  # check if a file exists at a certain path
-
 
 class FullyConnected():
 	"""
@@ -33,7 +31,9 @@ class FullyConnected():
 		self.size = len(shape)
 
 		# TODO Gaussian Normal distribution
-		self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
+		# self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
+
+		self.weights = [np.random.normal(0, 0.01, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
@@ -92,7 +92,9 @@ class FullyConnected():
 
 			# Update weights
 			# same as self.weights[-index] which doesn't work for some reason
-			deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)
+			# deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)  # Sigmoid
+
+			deltaWeight = learningRate * np.dot(-errorL0 * (1.0 - np.square(outputL0)), outputL1.T)  # tanh
 
 			self.weights[len(self.weights) - 1 - index] -= deltaWeight
 
@@ -133,31 +135,6 @@ class FullyConnected():
 		# Cast to float128 else we get an overflow error
 		z = z.astype(np.float128)
 
-		return 1.0 / (1.0 + np.exp(-z))
+		return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))  # tanh
 
-	# def saveWeights(self, fullFilePath):
-	# 	"""
-	# 		Saves weights as a binary file to the given fullFilePath.
-	# 	"""
-
-	# 	if os.path.exists(fullFilePath):
-	# 		print("Network cannot be saved since that file already exists at that path")
-	# 		return
-
-	# 	np.save(fullFilePath, self.weights)
-	# 	print("Saved weights to {}".format(fullFilePath))
-
-	# def loadWeights(self, fullFilePath):
-	# 	"""
-	# 		Load weights from a binary file from the given fullFilePath
-	# 	"""
-
-	# 	print("Attempting to loading weights from {}".format(fullFilePath))
-	# 	try:
-	# 		self.weights = np.load(fullFilePath)
-
-	# 		# todo set self.shape and self.size according to retrieved self.weights
-	# 		print("Successfully loaded weights and created network")
-
-	# 	except Exception as error:
-	# 		print("Failed to load weights: {}".format(error))
+		# return 1.0 / (1.0 + np.exp(-z))  # Sigmoid
