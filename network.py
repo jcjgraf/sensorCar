@@ -81,8 +81,6 @@ class Network():
 		deltaPrintCost = 0
 		previousPrintCost = 0
 
-		
-
 		for epoch in range(epochs):
 
 			# Read trainingfile and train on it line by line
@@ -135,8 +133,11 @@ class Network():
 
 				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
-			if saveNet is not None and (epoch + 1) % saveNet == 0:
-				self.save(savePath + str(epoch + 1) + ".txt")
+			if saveNet is not None:
+				self.saveTrainingData(savePath + "training.txt", str(cost))
+
+				if (epoch + 1) % saveNet == 0:
+					self.saveNet(savePath + str(epoch + 1) + ".txt")
 
 		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - trainingStart, costList[-1]))
 
@@ -211,7 +212,7 @@ class Network():
 
 			print("The mean difference is {}".format(differenceSum / numberOfLines))
 
-	def save(self, filePath):
+	def saveNet(self, filePath):
 		"""
 			Save the instance of this class to the given filePath
 		"""
@@ -221,7 +222,17 @@ class Network():
 		with open(filePath, "wb") as f:
 			f.write(pickle.dumps(self.__dict__))
 
-	def load(self, filePath):
+	def saveTrainingData(self, filePath, toSave):
+		"""
+			Saves toSave to the text file specified in the filePath
+		"""
+
+		print("Saving network training data to {}".format(filePath))
+
+		with open(filePath, "a") as f:
+			f.write("\n" + toSave)
+
+	def loadNet(self, filePath):
 		"""
 			Load the instance of this class from the given filePath
 		"""
