@@ -7,11 +7,6 @@ using UnityStandardAssets.CrossPlatformInput;
 
 namespace UnityStandardAssets.Vehicles.Car {
 
-	// internal enum CarMode {
-	// 	Manual,
-	// 	Net
-	// }
-
 	[RequireComponent(typeof (CarController))]
 	public class SocketClient : MonoBehaviour {
 
@@ -40,7 +35,16 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			// TODO mode change stuff
 
-			if (doRecord) {
+			if (CrossPlatformInputManager.GetAxis("Horizontal") != 0) {
+				
+				float h = CrossPlatformInputManager.GetAxis("Horizontal");
+            	float v = CrossPlatformInputManager.GetAxis("Vertical");
+
+	            float handbrake = CrossPlatformInputManager.GetAxis("Jump");
+    	        carController.Move(h, v, v, handbrake);
+
+
+			} else if (doRecord) {
 				doRecord = false;
 
 				// collect data
@@ -87,9 +91,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			// Retrieve json and converte to 
 			JSONObject jsonData = obj.data;
-
 			string jsonString = jsonData.GetField("steering_angle").str;
-
 			float steering = float.Parse(jsonString);
 
 			Debug.Log("Steering Angle: " + steering);
@@ -97,7 +99,6 @@ namespace UnityStandardAssets.Vehicles.Car {
 			float v = CrossPlatformInputManager.GetAxis("Vertical");
 
 			carController.netMove(steering, v, v, 0.0f);
-			// carController.netMove(25, 0.1f, 0.0f, 0.0f);
 
 			doRecord = true;
 		}
