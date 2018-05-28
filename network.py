@@ -11,6 +11,8 @@ import numpy as np
 import pickle  # Save instance of class
 import time  # Measure time
 
+import os
+
 from fullyConnected import FullyConnected
 
 
@@ -40,7 +42,9 @@ class Network():
 			If a dataSet is initiated and assigned the dff is trained. An
 			optional epochs (Default is 1) and learningRate (Defualt is 0.3) can
 			be given. Verbosity determines the number of epochs after which some
-			information is printed out.
+			information is printed out. The optional saveNet is the number of
+			epochs after which the network instance is saved to the savePath if
+			provided. Else it will be saved to a default path.
 			Returns a list containing all costfunction values of each epoch
 		"""
 
@@ -51,20 +55,36 @@ class Network():
 
 		print("{0}\nTraining started\nnumberOfEpochs: {1}".format(15 * "-", epochs))
 
-		trainingStart = time.time()  # Used for calculating used time
+		if saveNet is not None:
+
+			# Set default filepath if none is provided
+			if savePath is None:
+				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.','_') + "/"
+
+			# Check if dir already exists, if so add roman letters behinde it
+			while os.path.exists(savePath):
+				savePath = savePath[:savePath.rfind("/")] + "I" + savePath[savePath.rfind("/"):]
+
+			os.makedirs(savePath)
+
+		startTrainingTime = time.time()  # Used for calculating used time
 		costList = []  # Holds the cost value of each epoch
+		previousPrintTrainingTime = time.time()
 
 		for epoch in range(epochs):
 
 			# Used to determine whether this epoch data should be printed / saved
-			doPrint = False
-			doSave = False
-
 			if verbosity is not 0 and ((epoch + 1) % verbosity == 0 or epoch == 0):
 				doPrint = True
 
-			if saveNet is not None and savePath is not None and (epoch + 1) % saveNet == 0:
+			else:
+				doPrint = False
+
+			if saveNet is not None and (epoch + 1) % saveNet == 0:
 				doSave = True
+
+			else:
+				doSave = False
 
 			if doPrint:
 				print("{2}\nEpoch {0}/{1}".format(epoch + 1, epochs, 15 * "-"))
@@ -75,10 +95,13 @@ class Network():
 				costSum = 0
 				numberOfLines = 0
 
-				dEpochTrainingTime = 0
-				dPrintTrainingTime = 0
-				dEpochCost = 0
-				dPrintCost = 0
+				startEpochTrainingTime = time.time()
+
+				deltaEpochTrainingTime = 0
+				deltaPrintTrainingTime = 0
+
+				deltaEpochCost = 0
+				deltaPrintCost = 0
 
 				for line in trf:
 					# Split the line entities into an array and normalize it
@@ -88,7 +111,7 @@ class Network():
 
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 
-# todo Normalisation
+					# todo Normalisation
 					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
 
 					# vector = lineEntities[-self.dataSet.inputLabelNumber[1]:]
@@ -102,21 +125,24 @@ class Network():
 
 			costList.append(costSum[0][0] / numberOfLines)
 
-			# Var for print
+			# Variables for printing
 			cost = costSum / numberOfLines
 
-			dEpochTrainingTime = time.time() - dEpochTrainingTime
-			print(time.time(), dEpochTrainingTime)
-			dEpochCost = dEpochCost - cost
+			deltaEpochCost = deltaEpochCost - cost
 
 			if doPrint:
 
-				totalTrainingTime = time.time() - trainingStart
-				dPrintTrainingTime = time.time() - dPrintTrainingTime
+				deltaTrainingTime = time.time() - startTrainingTime
 
-				dPrintCost = dPrintCost - cost
+				deltaEpochTrainingTime = time.time() - startEpochTrainingTime
 
-				print("totalTrainingTime:\t{},\ndEpochTrainingTime:\t{},\ndPrintTrainingTime:\t{},\ncost:\t{},\ndEpochCost:\t{},\ndPrintCost:\t{}".format(totalTrainingTime, dEpochTrainingTime, dPrintTrainingTime, cost, dEpochCost, dPrintCost))
+				deltaPrintTrainingTime = time.time() - previousPrintTrainingTime
+				previousPrintTrainingTime = time.time()
+
+
+				deltaPrintCost = deltaPrintCost - cost
+
+				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
 			if doSave:
 				self.save(savePath + str(epoch + 1) + ".txt")
@@ -152,6 +178,13 @@ class Network():
 		"""
 
 		return np.divide(1, vector, out=np.zeros_like(vector), where=vector != 0)
+
+	def getCost(self, inputVector, labelsVector):
+		"""
+			
+		"""
+
+		return (self.evaluate(inputVector) - labelsVector)**2
 
 	def getPerformance(self):
 		"""
@@ -191,7 +224,7 @@ class Network():
 		"""
 			Save the instance of this class to the given filePath
 		"""
-# todo create dir if not available
+			
 		print("Saving network instance to {}".format(filePath))
 
 		with open(filePath, "wb") as f:
