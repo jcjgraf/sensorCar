@@ -15,15 +15,13 @@ from sensorCarController import SensorCarController
 
 if __name__ == '__main__':
 
-	path = "./simulation/dataSet/track636614043698560200.txt"
+	path = "/Users/JeanClaude/Documents/Programming/matriculationProject/practical/sensorCar/simulation/dataSet/trackMaster.txt"
 
 	dataSet = DataSet(path, [3, 1], [1, 1])
-	network = Network([3, 10, 1], dataSet)
+	network = Network([3, 100, 50, 10, 1], dataSet)
+
+	network.loadNet("../neuralNetworks/savedNet/3-100-50-10-1-0_001/100.txt")
 
 	sensorCarController = SensorCarController(network)
-
-	sensorCarController.network.getPerformance()
-	sensorCarController.network.train(epochs=2, learningRate=0.5)
-	sensorCarController.network.getPerformance()
 
 	sensorCarController.startServer()
