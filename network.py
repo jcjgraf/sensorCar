@@ -69,54 +69,45 @@ class Network():
 
 		startTrainingTime = time.time()  # Used for calculating used time
 		costList = []  # Holds the cost value of each epoch
-		previousPrintTrainingTime = time.time()
+
+		deltaEpochTrainingTime = 0  # time between two epochs
+
+		deltaPrintTrainingTime = 0  # time between two prints
+		previousPrintTrainingTime = time.time()  # time of the previous print. Used for calculating the deltaPrintTime
+
+		deltaEpochCost = 0
+		previousEpochCost = 0
+
+		deltaPrintCost = 0
+		previousPrintCost = 0
+
+		
 
 		for epoch in range(epochs):
-
-			# Used to determine whether this epoch data should be printed / saved
-			if verbosity is not 0 and ((epoch + 1) % verbosity == 0 or epoch == 0):
-				doPrint = True
-
-			else:
-				doPrint = False
-
-			if saveNet is not None and (epoch + 1) % saveNet == 0:
-				doSave = True
-
-			else:
-				doSave = False
-
-			if doPrint:
-				print("{2}\nEpoch {0}/{1}".format(epoch + 1, epochs, 15 * "-"))
 
 			# Read trainingfile and train on it line by line
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
 
-				costSum = 0
+				costSum = 0  # costSum of one epoch
 				numberOfLines = 0
 
 				startEpochTrainingTime = time.time()
 
-				deltaEpochTrainingTime = 0
-				deltaPrintTrainingTime = 0
+				doPrint = False
 
-				deltaEpochCost = 0
-				deltaPrintCost = 0
+				# Determine whether this epoch data should be printed
+				if verbosity is not 0 and ((epoch + 1) % verbosity == 0 or epoch == 0):
+
+					print("{2}\nEpoch {0}/{1}".format(epoch + 1, epochs, 15 * "-"))
+
+					doPrint = True
 
 				for line in trf:
 					# Split the line entities into an array and normalize it
 					lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
 
-					# lineEntities = self.normalize(np.array([float(i) for i in line.split("\t")], dtype=np.float128))
-
-					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
-
 					# todo Normalisation
-					# labels = self.normalize(lineEntities[-self.dataSet.inputLabelNumber[1]:])
-
-					# vector = lineEntities[-self.dataSet.inputLabelNumber[1]:]
-					# labels = 0.5 * self.dff.sigmoid(vector)
-
+					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
 					labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
 
 					costSum += self.dff.train(inputs, labels, learningRate)
@@ -125,10 +116,10 @@ class Network():
 
 			costList.append(costSum[0][0] / numberOfLines)
 
-			# Variables for printing
 			cost = costSum / numberOfLines
 
-			deltaEpochCost = deltaEpochCost - cost
+			deltaEpochCost = previousEpochCost - cost
+			previousEpochCost = cost
 
 			if doPrint:
 
@@ -139,12 +130,12 @@ class Network():
 				deltaPrintTrainingTime = time.time() - previousPrintTrainingTime
 				previousPrintTrainingTime = time.time()
 
-
-				deltaPrintCost = deltaPrintCost - cost
+				deltaPrintCost = previousPrintCost - cost
+				previousPrintCost = cost
 
 				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
-			if doSave:
+			if saveNet is not None and (epoch + 1) % saveNet == 0:
 				self.save(savePath + str(epoch + 1) + ".txt")
 
 		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - trainingStart, costList[-1]))
