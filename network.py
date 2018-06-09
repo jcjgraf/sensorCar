@@ -37,14 +37,16 @@ class Network():
 		if dataSet is not False:
 			self.dataSet = dataSet
 
-	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
+	def train(self, activation, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
 		"""
-			If a dataSet is initiated and assigned the dff is trained. An
-			optional epochs (Default is 1) and learningRate (Defualt is 0.3) can
-			be given. Verbosity determines the number of epochs after which some
-			information is printed out. The optional saveNet is the number of
-			epochs after which the network instance is saved to the savePath if
-			provided. Else it will be saved to a default path.
+			If a dataSet is initiated and assigned the dff is trained.
+			Activation determines the activationfunction and can eigheter be
+			"sigmoid" or "tamh". An optional epochs (Default is 1) and
+			learningRate (Defualt is 0.3) can be given. Verbosity determines the
+			number of epochs after which some information is printed out. The
+			optional saveNet is the number of epochs after which the network
+			instance is saved to the savePath if provided. Else it will be saved
+			to a default path.
 			Returns a list containing all costfunction values of each epoch
 		"""
 
@@ -59,7 +61,7 @@ class Network():
 
 			# Set default filepath if none is provided
 			if savePath is None:
-				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.','_') + "/"
+				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.', '_') + "/"
 
 			# Check if dir already exists, if so add roman letters behinde it
 			while os.path.exists(savePath):
@@ -106,9 +108,10 @@ class Network():
 
 					# todo Normalisation
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
-					labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
+					# labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
+					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
-					costSum += self.dff.train(inputs, labels, learningRate)
+					costSum += self.dff.train(inputs, labels, activation, learningRate)
 
 					numberOfLines += 1
 
@@ -139,7 +142,7 @@ class Network():
 				if (epoch + 1) % saveNet == 0:
 					self.saveNet(savePath + str(epoch + 1) + ".txt")
 
-		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - trainingStart, costList[-1]))
+		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - startTrainingTime, costList[-1]))
 
 		return costList
 

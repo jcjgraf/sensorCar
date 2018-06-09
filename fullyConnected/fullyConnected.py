@@ -30,10 +30,9 @@ class FullyConnected():
 		self.shape = np.array(shape, ndmin=2)
 		self.size = len(shape)
 
-		# TODO Gaussian Normal distribution
 		# self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
 
-		self.weights = [np.random.normal(0, 0.01, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
+		self.weights = [np.random.normal(0, 1, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
@@ -66,7 +65,7 @@ class FullyConnected():
 
 		return layerVector
 
-	def train(self, inputs, labels, learningRate=0.5):
+	def train(self, inputs, labels, activation, learningRate=0.5):
 		"""
 			inputs is the inputlayer vector, where labels is a vector holding
 			the associated labels. A deltaError is calculated and the weights
@@ -92,9 +91,15 @@ class FullyConnected():
 
 			# Update weights
 			# same as self.weights[-index] which doesn't work for some reason
-			# deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)  # Sigmoid
 
-			deltaWeight = learningRate * np.dot(-errorL0 * (1.0 - np.square(outputL0)), outputL1.T)  # tanh
+			if activation == "sigmoid":
+				deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)
+
+			elif activation == "tanh":
+				deltaWeight = learningRate * np.dot(-errorL0 * (1.0 - np.square(outputL0)), outputL1.T)  # tanh
+			else:
+				print("Error: Activationfunction not found")
+				return
 
 			self.weights[len(self.weights) - 1 - index] -= deltaWeight
 
@@ -135,6 +140,15 @@ class FullyConnected():
 		# Cast to float128 else we get an overflow error
 		z = z.astype(np.float128)
 
-		return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))  # tanh
+		return 1.0 / (1.0 + np.exp(-z))
 
-		# return 1.0 / (1.0 + np.exp(-z))  # Sigmoid
+	def tanh(self, z):
+		"""
+			Applies the tanh function elementwise to the vector z with shape
+			(1, n) or (n, 1) and return a vector of the same shape
+		"""
+
+		# Cast to float128 else we get an overflow error
+		z = z.astype(np.float128)
+
+		return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
