@@ -67,15 +67,12 @@ class SensorCarController():
 
 		# Convert string of json to float list
 		inputVector = np.array([float(data[key]) for key in data], dtype=np.float32)
-		inputVector = np.array([3.952962, 36.34844, 17.27616], dtype=np.float32)
 
 		# evaluate in net
-		outputVector = self.network.evaluate(inputVector, normalize=True)[0][0]
+		outputVector = self.network.evaluate(inputVector)[0][0]
 
 		# todo make general
-
-		# TODO recheck why list in list
 		print(inputVector, "->", outputVector)
 
 		# returne evaluated values to simulation
-		self.sio.emit('steer', data={'steering_angle': str(outputVector)}, skip_sid=True)
+		self.sio.emit('steer', data={'steering_angle': str(25 * outputVector)}, skip_sid=True)
