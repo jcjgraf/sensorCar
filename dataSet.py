@@ -7,6 +7,7 @@ import numpy as np
 # import linecache  # Get a specific line of a file
 
 import os.path  # check if a file exists at a certain path
+import random  # Shuffle lines in dataset
 
 
 class DataSet():
@@ -98,6 +99,20 @@ class DataSet():
 
 			print("Done creating training and test dataSet")
 
+	def shuffleDataSet(self, dataSetPath):
+		"""
+			dataSetPath is the path to the dataset which is then shuffled and
+			saved
+		"""
+
+		with open(dataSetPath, "r+") as f:
+			lines = f.readlines()
+			print(lines)
+			random.shuffle(lines)
+			print(lines)
+			f.seek(0)
+			f.writelines(lines)
+
 	def getStats(self):
 		"""
 			Analyses the dataset and gives the following statis about it:
@@ -139,7 +154,7 @@ class DataSet():
 
 					# If min
 					if entity < extremaVector[1][i]:
-						extremaVector[1][i] = entity 
+						extremaVector[1][i] = entity
 
 				numberOfLines += 1
 
