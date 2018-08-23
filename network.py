@@ -25,19 +25,19 @@ class Network():
 
 	dataSet = None
 
-	def __init__(self, dffShape, dataSet=False):
+	def __init__(self, dffShape, activation, dataSet=False):
 		"""
 			dffShape is a array where each element represents the number of
 			nodes in each layer of the dff. dataSet is an instance of DataSet.
 			When it is not provided network cannot be used to train and get the
 			performance of the net
 		"""
-		self.dff = FullyConnected(dffShape)
+		self.dff = FullyConnected(dffShape, activation)
 
 		if dataSet is not False:
 			self.dataSet = dataSet
 
-	def train(self, activation, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
+	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
 		"""
 			If a dataSet is initiated and assigned the dff is trained.
 			Activation determines the activationfunction and can eigheter be
@@ -111,7 +111,7 @@ class Network():
 					# labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
 					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
-					costSum += self.dff.train(inputs, labels, activation, learningRate)
+					costSum += self.dff.train(inputs, labels, learningRate)
 
 					numberOfLines += 1
 

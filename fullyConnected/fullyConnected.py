@@ -6,6 +6,7 @@
 """
 
 import numpy as np
+from activationFunction import ActivationFunction
 
 
 class FullyConnected():
@@ -19,8 +20,9 @@ class FullyConnected():
 	shape = None
 	size = None
 	weights = None
+	activation = ActivationFunction.tanh
 
-	def __init__(self, shape):
+	def __init__(self, shape, activation):
 		"""
 			Initiate network with a shape list, where each element represents
 			the number of fully connected nodes in a specific layer.
@@ -29,6 +31,9 @@ class FullyConnected():
 
 		self.shape = np.array(shape, ndmin=2)
 		self.size = len(shape)
+
+# error activation not working
+		self.activation = activation
 
 		# self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
 
@@ -54,8 +59,16 @@ class FullyConnected():
 			# Sum up all the inputs * weights for all node in layer n
 			summed = np.dot(layerWeights, layerVector)
 
-			# Apply the sigmoid function to the summed input in order to get the output of layer n
-			layerVector = self.sigmoid(summed)
+			# Apply the activation function to the summed input in order to get the output of layer n
+			if self.activation == ActivationFunction.sigmoid:
+				layerVector = self.sigmoid(summed)
+
+			elif self.activation == ActivationFunction.tanh:
+				layerVector = self.tanh(summed)
+
+			else:
+				print("Error: Activationfunction not found")
+				return None
 
 			networkLayerValues.append(layerVector)
 
@@ -65,7 +78,7 @@ class FullyConnected():
 
 		return layerVector
 
-	def train(self, inputs, labels, activation, learningRate=0.5):
+	def train(self, inputs, labels, learningRate=0.5):
 		"""
 			inputs is the inputlayer vector, where labels is a vector holding
 			the associated labels. A deltaError is calculated and the weights
@@ -92,10 +105,10 @@ class FullyConnected():
 			# Update weights
 			# same as self.weights[-index] which doesn't work for some reason
 
-			if activation == "sigmoid":
+			if self.activation == ActivationFunction.sigmoid:
 				deltaWeight = learningRate * np.dot(-errorL0 * outputL0 * (1.0 - outputL0), outputL1.T)
 
-			elif activation == "tanh":
+			elif self.activation == ActivationFunction.tanh:
 				deltaWeight = learningRate * np.dot(-errorL0 * (1.0 - np.square(outputL0)), outputL1.T)  # tanh
 			else:
 				print("Error: Activationfunction not found")
