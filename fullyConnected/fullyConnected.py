@@ -20,9 +20,9 @@ class FullyConnected():
 	shape = None
 	size = None
 	weights = None
-	activation = ActivationFunction.tanh
+	activation = None
 
-	def __init__(self, shape, activation):
+	def __init__(self, shape, activation=ActivationFunction.tanh):
 		"""
 			Initiate network with a shape list, where each element represents
 			the number of fully connected nodes in a specific layer.
@@ -32,10 +32,7 @@ class FullyConnected():
 		self.shape = np.array(shape, ndmin=2)
 		self.size = len(shape)
 
-# error activation not working
 		self.activation = activation
-
-		# self.weights = [np.random.randn(y, x) for x, y in zip(shape[:-1], shape[1:])]
 
 		self.weights = [np.random.normal(0, 1, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
 
