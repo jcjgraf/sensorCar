@@ -25,14 +25,16 @@ class Network():
 
 	dataSet = None
 
-	def __init__(self, dffShape, activation, dataSet=False):
+	def __init__(self, dffShape=False, activation=False, dataSet=False):
 		"""
 			dffShape is a array where each element represents the number of
 			nodes in each layer of the dff. dataSet is an instance of DataSet.
 			When it is not provided network cannot be used to train and get the
 			performance of the net
 		"""
-		self.dff = FullyConnected(dffShape, activation)
+		
+		if dffShape and activation:
+			self.dff = FullyConnected(dffShape, activation)
 
 		if dataSet is not False:
 			self.dataSet = dataSet
@@ -84,6 +86,9 @@ class Network():
 		previousPrintCost = 0
 
 		for epoch in range(epochs):
+
+			# Shuffle Dataset
+			self.dataSet.shuffleDataSet(self.dataSet.trainingDataSetPath)
 
 			# Read trainingfile and train on it line by line
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
