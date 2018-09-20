@@ -28,7 +28,7 @@ public class RoadGenerator : MonoBehaviour {
 	// Needed since it might trigger several collisions in the same frame
 	private bool hasTriggered = false;
 
-	void Awake () {
+	void Awake() {
 
 		TriggerManager.colliderTriggered += trigger;
 
@@ -51,7 +51,7 @@ public class RoadGenerator : MonoBehaviour {
 		generateRoad(0);
 	}
 	
-	void Update () {
+	void Update() {
 		/*
 			Get the name resp. its number of the first segment in the roadSegmentsQueme and compare it the with segment the car is on currently. If it has passed the first segment, destroy it and generate a new one.
 		*/
@@ -247,5 +247,4 @@ public class RoadGenerator : MonoBehaviour {
 			}
 		}
 	}
-
 }

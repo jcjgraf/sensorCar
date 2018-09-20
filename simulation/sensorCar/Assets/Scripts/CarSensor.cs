@@ -1,7 +1,7 @@
-﻿// """
-//	gets the distance between the sensor head an the hitted object and draws the
-// 	"sensorbeam". It can also display the distance in the UI.
-// """
+﻿/*
+	gets the distance between the sensor head an the hitted object and draws the
+	"sensorbeam". It can also display the distance in the UI.
+*/
 
 using System.Collections;
 using System.Collections.Generic;
@@ -9,21 +9,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CarSensor : MonoBehaviour {
-	// """
-	//	gets the distance between the sensor head an the hitted object and draws the
-	// 	"sensorbeam". It can also display the distance in the UI.
-	// """
+	/*
+		gets the distance between the sensor head an the hitted object and draws the
+		"sensorbeam". It can also display the distance in the UI.
+	*/
 
 	[SerializeField] private GameObject[] sensors;
 	[SerializeField] private Text[] texts;
 
 	public List<float> distances;
 	
-	void Update () {
-		// """
-		// 	Mesure distance between sensor and hit object and return an array 
-		// containg the information for all sensors
-		// """
+	void Update() {
+		/*
+			Mesure distance between sensor and hit object and return an array 
+			containg the information for all sensors
+		*/
 
 		RaycastHit hit;
 
@@ -50,9 +50,9 @@ public class CarSensor : MonoBehaviour {
 	}
 
 	private void displayDistance() {
-		// """
-		// 	Display the distance in the UI
-		// """
+		/*
+			Display the distance in the UI
+		*/
 
 		for (int i = 0; i < texts.Length; i++) {	
 

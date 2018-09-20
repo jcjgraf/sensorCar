@@ -1,8 +1,8 @@
-// """
-//	In recording-mode it retrieves the sensor information and saved it to a
-//  specified file in regular intervalls.
-//  The recording-mode is turned on with "r", and stopped with "f"
-// """
+/*
+	In recording-mode it retrieves the sensor information and saved it to a
+	specified file in regular intervalls.
+	The recording-mode is turned on with "r", and stopped with "f"
+*/
 
 import System;
 import System.IO;
@@ -17,19 +17,19 @@ var carController: MonoBehaviour;
 
 function Update() {
     if (Input.GetKeyDown("f")) {
-     record(false);
+    	record(false);
     }
 
     if (Input.GetKeyDown("r")) {
-     record(true);
+    	record(true);
     }
 }
 
 function record(doRecord) {
-	// """
-	// 	Save retrieved sensor data in a periodical interval to a textfile when
-	// 	the recording-mode is enabled by pressing "r". "f" for disable it
-	// """
+	/*
+		Save retrieved sensor data in a periodical interval to a textfile when
+		the recording-mode is enabled by pressing "r". "f" for disable it
+	*/
 
 	var sw: StreamWriter;
 
