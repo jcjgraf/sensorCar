@@ -1,0 +1,17 @@
+NeuralNetworks TODO:
+
+FullyConnected:
+  -> .\fullyConnected.py\
+
+ ☐ guassian normal distribution at weight initialisation @low
+ ✔ check that everything is right with the arrays (shape match etc.) @high @done (18-05-11 23:18)
+ ☐ check for overfitting @low
+ ✔ check if a file already exist when saving @low @done (18-05-11 23:23)
+ ☐ when weights are loaded make sure that everythings works properly @low
+
+DataSet:
+  -> .\dataSet.py\
+
+ ☐ Shuffle DataSet @low
+ ☐ make work with n sensor inputs @low
+ ✔ restructure code @high @done (18-05-11 23:17)
