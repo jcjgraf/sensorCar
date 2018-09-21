@@ -75,7 +75,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 		}
 		
 		public void onError(SocketIOEvent obj) {
-			Debug.Log("[SocketIO] Error received: " + obj.name + " " + obj.data);
+//			Debug.Log("[SocketIO] Error received: " + obj.name + " " + obj.data);
 
 			doRecord = false;
 		}
@@ -96,7 +96,13 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			Debug.Log("Steering Angle: " + steering);
 
-			float v = CrossPlatformInputManager.GetAxis("Vertical");
+			// Use a default input, if none is provided
+			float v = 0.25f;
+
+			if (CrossPlatformInputManager.GetAxis ("Horizontal") != 0) {
+				v = CrossPlatformInputManager.GetAxis ("Vertical");
+
+			}
 
 			carController.netMove(steering, v, v, 0.0f);
 
