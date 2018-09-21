@@ -239,6 +239,8 @@ public class RoadGenerator : MonoBehaviour {
 
 							hasTriggered = true;	
 							Destroy (segment.gameObject);
+
+							lastIndex--;
 						}
 					}
 				} catch {
