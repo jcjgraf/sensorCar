@@ -22,6 +22,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		[SerializeField] private float verticalInput = 0.25f;
 		[SerializeField] private bool doAutoAccelerate = false;
+		[SerializeField] private bool doIgnoreVertical = false;
 
 		public void Start()  {
 
@@ -40,9 +41,12 @@ namespace UnityStandardAssets.Vehicles.Car {
 			if ((netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) || netControl == false) {
 
 				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
-				float v = verticalInput;
+				float v = 0f;
 
-				if (doAutoAccelerate == false) {
+				if (doAutoAccelerate) {
+					v = verticalInput;
+				
+				} else if (doIgnoreVertical == false) {
 					v = CrossPlatformInputManager.GetAxis ("Vertical");
 				}
 
@@ -105,9 +109,12 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			Debug.Log("Steering Angle: " + steering);
 
-			float v = verticalInput;
+			float v = 0f;
 
-			if (doAutoAccelerate == false) {
+			if (doAutoAccelerate) {
+				v = verticalInput;
+
+			} else if (doIgnoreVertical == false) {
 				v = CrossPlatformInputManager.GetAxis ("Vertical");
 			}
 
