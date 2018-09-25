@@ -16,8 +16,12 @@ namespace UnityStandardAssets.Vehicles.Car {
 		
 		private bool doRecord = false;
 
+		private bool netControl = false;
+
 		Dictionary<string, string> data;
 
+		[SerializeField] private float verticalInput = 0.25f;
+		[SerializeField] private bool doAutoAccelerate = false;
 
 		public void Start()  {
 
@@ -33,37 +37,39 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		public void Update() {
 
-			// TODO mode change stuff
+			if ((netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) || netControl == false) {
 
-			if (CrossPlatformInputManager.GetAxis("Horizontal") != 0) {
-				
-				float h = CrossPlatformInputManager.GetAxis("Horizontal");
-            	float v = CrossPlatformInputManager.GetAxis("Vertical");
+				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
+				float v = verticalInput;
 
-	            float handbrake = CrossPlatformInputManager.GetAxis("Jump");
-    	        carController.Move(h, v, v, handbrake);
+				if (doAutoAccelerate == false) {
+					v = CrossPlatformInputManager.GetAxis ("Vertical");
+				}
 
+				float handbrake = CrossPlatformInputManager.GetAxis ("Jump");
+				carController.Move (h, v, v, handbrake);
 
-			} else if (doRecord) {
+			} else if (netControl && doRecord) {
+
 				doRecord = false;
 
 				// collect data
-				data = new Dictionary<string, string>();
+				data = new Dictionary<string, string> ();
 
 				for (int i = 0; i < carSensor.distances.Count; i++) {
 
-					if (float.IsInfinity(carSensor.distances[i])) {
+					if (float.IsInfinity (carSensor.distances [i])) {
 						doRecord = true;
 						return;
 
 					} else {
-						data["s" + i.ToString()] = carSensor.distances[i].ToString();
+						data ["s" + i.ToString ()] = carSensor.distances [i].ToString ();
 					}
 				}
 
-				Debug.Log(new JSONObject(data));
+				Debug.Log (new JSONObject (data));
 
-				socket.Emit("evaluate", new JSONObject(data));
+				socket.Emit ("evaluate", new JSONObject (data));
 			}
 
 		}
@@ -72,18 +78,21 @@ namespace UnityStandardAssets.Vehicles.Car {
 			Debug.Log("[SocketIO] Open received: " + obj.name + " " + obj.data);
 
 			doRecord = true;
+			netControl = true;
 		}
 		
 		public void onError(SocketIOEvent obj) {
 //			Debug.Log("[SocketIO] Error received: " + obj.name + " " + obj.data);
 
 			doRecord = false;
+			netControl = false;
 		}
 		
 		public void onClose(SocketIOEvent obj) {	
 			Debug.Log("[SocketIO] Close received: " + obj.name + " " + obj.data);
 
 			doRecord = false;
+			netControl = false;
 		}
 
 		public void onSteer(SocketIOEvent obj) {
@@ -96,12 +105,10 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 			Debug.Log("Steering Angle: " + steering);
 
-			// Use a default input, if none is provided
-			float v = 0.25f;
+			float v = verticalInput;
 
-			if (CrossPlatformInputManager.GetAxis ("Horizontal") != 0) {
+			if (doAutoAccelerate == false) {
 				v = CrossPlatformInputManager.GetAxis ("Vertical");
-
 			}
 
 			carController.netMove(steering, v, v, 0.0f);
