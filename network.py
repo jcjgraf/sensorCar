@@ -5,7 +5,7 @@
 """
 
 import sys
-sys.path.insert(0, '../neuralNetworks/fullyConnected/')
+# sys.path.insert(0, '../neuralNetworks/fullyConnected/')
 
 import numpy as np
 import pickle  # Save instance of class
@@ -63,7 +63,9 @@ class Network():
 
 			# Set default filepath if none is provided
 			if savePath is None:
-				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.', '_') + "/"
+				ds = self.dataSet.fullDataSetPath
+
+				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
 
 			# Check if dir already exists, if so add roman letters behinde it
 			while os.path.exists(savePath):
@@ -88,7 +90,7 @@ class Network():
 		for epoch in range(epochs):
 
 			# Shuffle Dataset
-			self.dataSet.shuffleDataSet(self.dataSet.trainingDataSetPath)
+			# self.dataSet.shuffleDataSet(self.dataSet.trainingDataSetPath)
 
 			# Read trainingfile and train on it line by line
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
@@ -109,12 +111,12 @@ class Network():
 
 				for line in trf:
 					# Split the line entities into an array and normalize it
-					lineEntities = np.array([float(i) for i in line.split("\t")], dtype=np.float128)
+					lineEntities = np.array([float(i) for i in line.split(",")], dtype=np.float128)
 
 					# todo Normalisation
 					inputs = lineEntities[:self.dataSet.inputLabelNumber[0]]
-					# labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
-					labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
+					labels = np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25)
+					# labels = lineEntities[-self.dataSet.inputLabelNumber[1]:]
 
 					costSum += self.dff.train(inputs, labels, learningRate)
 
@@ -139,12 +141,13 @@ class Network():
 				deltaPrintCost = previousPrintCost - cost
 				previousPrintCost = cost
 
+				print("{0}{1}{0}".format(5 * "-", self.dff.shape))
 				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
 			if saveNet is not None:
 				self.saveTrainingData(savePath + "training.txt", str(cost))
 
-				if (epoch + 1) % saveNet == 0:
+				if (epoch + 1) % saveNet == 0 or epoch == epochs - 1:
 					self.saveNet(savePath + str(epoch + 1) + ".txt")
 
 		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - startTrainingTime, costList[-1]))
@@ -224,7 +227,7 @@ class Network():
 		"""
 			Save the instance of this class to the given filePath
 		"""
-			
+
 		print("Saving network instance to {}".format(filePath))
 
 		with open(filePath, "wb") as f:

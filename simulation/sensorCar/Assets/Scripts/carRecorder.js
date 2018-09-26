@@ -60,7 +60,7 @@ function record(doRecord) {
 		var steerAngle = carController.CurrentSteerAngle;
 
 		// TODO make work with n sensors
-		var saveString = distances[0] + "\t" + distances[1] + "\t" + distances[2] + "\t" + steerAngle;
+		var saveString = distances[0] + "," + distances[1] + "," + distances[2] + "," + steerAngle;
 
 		sw.WriteLine(saveString);
 		sw.Flush();

@@ -34,7 +34,7 @@ class FullyConnected():
 
 		self.activation = activation
 
-		self.weights = [np.random.normal(0, 1, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
+		self.weights = [np.random.normal(0, 0.5, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
@@ -161,4 +161,13 @@ class FullyConnected():
 		# Cast to float128 else we get an overflow error
 		z = z.astype(np.float128)
 
-		return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
+		return np.tanh(z)
+
+		# ez = np.exp(z)
+		# enz = np.exp(-z)
+		# a = ez - enz
+		# b = ez + enz
+
+		# return np.divide(a, b, out=np.zeros_like(a), where=b!=0)
+
+		# return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))

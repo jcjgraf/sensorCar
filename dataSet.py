@@ -107,9 +107,7 @@ class DataSet():
 
 		with open(dataSetPath, "r+") as f:
 			lines = f.readlines()
-			print(lines)
 			random.shuffle(lines)
-			print(lines)
 			f.seek(0)
 			f.writelines(lines)
 
