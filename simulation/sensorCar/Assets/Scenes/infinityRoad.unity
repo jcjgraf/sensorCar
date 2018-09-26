@@ -4500,8 +4500,6 @@ MonoBehaviour:
   m_SlipLimit: 0.3
   m_BrakeTorque: 20000
   m_SteerAngle: 0
-  defaultVerticalInput: 0.25
-  doAutoAccelerate: 0
 --- !u!54 &917856614
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4546,7 +4544,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9484cf1f87e894773ab4d8564652833d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalInput: 0.25
+  verticalInput: 0.2
+  doAutoAccelerate: 0
+  doIgnoreVertical: 0
 --- !u!114 &917856617
 MonoBehaviour:
   m_ObjectHideFlags: 0
