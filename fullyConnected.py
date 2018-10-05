@@ -34,7 +34,7 @@ class FullyConnected():
 
 		self.activation = activation
 
-		self.weights = [np.random.normal(0, 0.5, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
+		self.weights = [np.random.normal(0, 1, size=(y, x)) for x, y in zip(shape[:-1], shape[1:])]
 
 	def evaluate(self, inputVector, getLayerValues=False):
 		"""
