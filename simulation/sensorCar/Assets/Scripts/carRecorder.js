@@ -59,8 +59,13 @@ function record(doRecord) {
 		var distances = carSensor.distances;
 		var steerAngle = carController.CurrentSteerAngle;
 
-		// TODO make work with n sensors
-		var saveString = distances[0] + "," + distances[1] + "," + distances[2] + "," + steerAngle;
+		var saveString: String = "";
+
+		for (i = 0; i < distances.Count; i++) {
+			saveString = saveString + distances[i] + ",";
+		}
+
+		saveString = saveString + steerAngle;
 
 		sw.WriteLine(saveString);
 		sw.Flush();
