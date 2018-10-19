@@ -31,14 +31,15 @@ def processTrainNetwork(data):
 
 def trainNetwork(hiddenLayerShape, learningRate, dataSetPath, epochs):
 
-	dataSet = DataSet(dataSetPath, [3, 1])
-	network = Network([3] + hiddenLayerShape + [1], ActivationFunction.tanh, dataSet)
+	# dataSet = DataSet(dataSetPath, [3, 1])
+	dataSet = DataSet(dataSetPath, [11, 1])
+	network = Network([11] + hiddenLayerShape + [1], ActivationFunction.tanh, dataSet)
 	network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveNet=10)
 
 
 if __name__ == '__main__':
 
-	ds = "./simulation/dataset/trackMaster.txt"
+	# ds = "./simulation/dataset/trackMaster.txt"
 
 	# data = [([100, 50, 10], 0.01, ds, 300), ([100, 50, 10], 0.0001, ds, 300), ([100, 50, 10], 0.006, ds, 300), ([100, 50, 10], 0.06, ds, 300)]
 
@@ -52,9 +53,13 @@ if __name__ == '__main__':
 
 	# data = [([100, 50, 10], 0.001, ds + "1k.txt", 300), ([100, 50, 10], 0.001, ds + "2k.txt", 300), ([100, 50, 10], 0.001, ds + "4k.txt", 300), ([100, 50, 10], 0.001, ds + "7k.txt", 300)]
 
-	p = Pool()
-	p.map(processTrainNetwork, data)
+	# ds = "./simulation/datasetII/randomTrack636743334676676450.txt"
 
-	# runCar()
+	# data = [([100, 50, 10], 0.001, ds, 500), ([200, 75, 10], 0.001, ds, 500), ([50, 25, 10], 0.001, ds, 500), ([250, 100, 10], 0.001, ds, 500)]
+
+	# p = Pool()
+	# p.map(processTrainNetwork, data)
+
+	runCar("./savedNet/11-50-25-10-1-0_001-randomTrack636743334676676450/490.txt")
 
 	

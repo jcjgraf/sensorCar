@@ -5557,7 +5557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9484cf1f87e894773ab4d8564652833d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalInput: 0.2
+  verticalInput: 0.1
   doAutoAccelerate: 0
   doIgnoreVertical: 0
 --- !u!114 &917856617
