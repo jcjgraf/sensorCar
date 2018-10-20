@@ -52,9 +52,9 @@ if __name__ == '__main__':
 
 	# data = [([100, 50, 10], 0.001, ds + "1k.txt", 300), ([100, 50, 10], 0.001, ds + "2k.txt", 300), ([100, 50, 10], 0.001, ds + "4k.txt", 300), ([100, 50, 10], 0.001, ds + "7k.txt", 300)]
 
-	p = Pool()
-	p.map(processTrainNetwork, data)
+	# p = Pool()
+	# p.map(processTrainNetwork, data)
 
-	# runCar()
+	runCar("./savedNet/3-100-50-10-1-0_001-trackMaster/440.txt")
 
-	
+
