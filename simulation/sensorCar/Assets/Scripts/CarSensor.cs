@@ -18,10 +18,10 @@ public class CarSensor : MonoBehaviour {
 	[SerializeField] private Text[] texts;
 
 	public List<float> distances;
-	
+
 	void Update() {
 		/*
-			Mesure distance between sensor and hit object and return an array 
+			Mesure distance between sensor and hit object and return an array
 			containg the information for all sensors
 		*/
 
@@ -54,7 +54,7 @@ public class CarSensor : MonoBehaviour {
 			Display the distance in the UI
 		*/
 
-		for (int i = 0; i < texts.Length; i++) {	
+		for (int i = 0; i < texts.Length; i++) {
 
 			// At the beginning the ui is not rendered, therefore the texts array is empty. Therefore we need a try and catch
 

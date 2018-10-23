@@ -4,9 +4,6 @@
 	be used to train and get the performance of the net.
 """
 
-import sys
-# sys.path.insert(0, '../neuralNetworks/fullyConnected/')
-
 import numpy as np
 import pickle  # Save instance of class
 import time  # Measure time
@@ -32,7 +29,7 @@ class Network():
 			When it is not provided network cannot be used to train and get the
 			performance of the net
 		"""
-		
+
 		if dffShape and activation:
 			self.dff = FullyConnected(dffShape, activation)
 
@@ -184,7 +181,7 @@ class Network():
 
 	def getCost(self, inputVector, labelsVector):
 		"""
-			
+			Returns the MSE
 		"""
 
 		return (self.evaluate(inputVector) - labelsVector)**2

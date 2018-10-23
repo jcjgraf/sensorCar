@@ -15,7 +15,6 @@ from multiprocessing import Pool
 
 
 def runCar(networkPath):
-	# networkPath = "./savedNet/3-20-1-0_03-trackMaster/460.txt"
 
 	network = Network()
 	network.loadNet(networkPath)
@@ -38,23 +37,6 @@ def trainNetwork(hiddenLayerShape, learningRate, dataSetPath, epochs):
 
 if __name__ == '__main__':
 
-	ds = "./simulation/dataset/trackMaster.txt"
-
-	# data = [([100, 50, 10], 0.01, ds, 300), ([100, 50, 10], 0.0001, ds, 300), ([100, 50, 10], 0.006, ds, 300), ([100, 50, 10], 0.06, ds, 300)]
-
-	# data = [([100, 50, 10], 0.001, ds, 1000)]
-
-	# data = [([20], 0.3, ds, 300), ([20, 20], 0.03, ds, 300), ([20, 20, 20], 0.003, ds, 300), ([20, 20, 20, 20], 0.0003, ds, 300)]
-
-	# data = [([5], 0.3, ds, 300), ([50], 0.3, ds, 300), ([80], 0.3, ds, 300), ([120], 0.3, ds, 300), ([200], 0.3, ds, 300)]
-
-	# ds = "./simulation/dataset/trackMaster"
-
-	# data = [([100, 50, 10], 0.001, ds + "1k.txt", 300), ([100, 50, 10], 0.001, ds + "2k.txt", 300), ([100, 50, 10], 0.001, ds + "4k.txt", 300), ([100, 50, 10], 0.001, ds + "7k.txt", 300)]
-
-	# p = Pool()
-	# p.map(processTrainNetwork, data)
+	# trainNetwork([20], 0.03, "./simulation/dataset/trackMaster.txt", 100)
 
 	runCar("./savedNet/3-100-50-10-1-0_001-trackMaster/440.txt")
-
-
