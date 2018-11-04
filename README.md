@@ -1,6 +1,14 @@
 # SensorCar
 
-Software for a self-driving car, based on neural networks. An Unity simulation is provided to run the car.
+Software for a self-driving car, based on artificial neural networks (ANNs). An Unity simulation is provided to run the car.
+
+![Image of the SensorCar](images/sc.jpg)
+
+Multiple sensors (3 at the moment in the Master branch) provide distance information to the ANN. In the evaluation process, these data is used to get the steering angle.
+
+![The path of the SensorCar](images/scPath.jpg)
+
+A module is provided for generating an infinitely long, randomly road. The SensorCar is capable of driving through this road map without any collisions.
 
 ## Getting Started
 
@@ -34,7 +42,7 @@ Set the delta time between two recordings in `Record Time Interval`.
 
 Start the Project by pressing on the play button at the top of the window or in Edit -> Play .
 
-Thecarcanbemanoeuvredwiththe <kbd>←</kbd> , <kbd>↑</kbd> , <kbd>→</kbd> , <kbd>↓</kbd> keys. Use the key <kbd>Space</kbd> for the handbrake.
+The car can be manoeuvred with the <kbd>←</kbd> , <kbd>↑</kbd> , <kbd>→</kbd> , <kbd>↓</kbd> keys. Use the key <kbd>Space</kbd> for the handbrake.
 
 Press <kbd>r</kbd> to start the recording and then <kbd>f</kbd> to stop it again. A checked checkbox `Is Recording in the Car Recorder indicates that a recording is in progress.
 
