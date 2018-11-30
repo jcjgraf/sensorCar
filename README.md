@@ -10,6 +10,8 @@ Multiple sensors (3 at the moment in the Master branch) provide distance informa
 
 A module is provided for generating an infinitely long, randomly road. The SensorCar is capable of driving through this road map without any collisions.
 
+:exclamation: This project is a proof of principle and thus no high-level libraries were used for creating the ANN.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine.
