@@ -15,6 +15,11 @@ var recordTimeInterval: float = 0.2;
 var carSensor: MonoBehaviour; // TODO: get the script directly (without haveing to drag n drop it)
 var carController: MonoBehaviour;
 
+var doRecordSensors: boolean = true;
+var doRecordSteerAngle: boolean = true;
+var doRecordCurrentSpeed: boolean = false;
+var doRecordVerticalInput: boolean = false;
+
 function Update() {
     if (Input.GetKeyDown("f")) {
     	record(false);
@@ -40,7 +45,12 @@ function record(doRecord) {
 		// Add current ticks to the filename so that is unique
 		var t: System.DateTime = System.DateTime.Now;
 		var fullName = fileName + t.Ticks + ".txt";
-		sw = new StreamWriter(filePath + fullName, true);  // TODO create dir if it does not already exist
+
+		if (!File.Exists(filePath)) {
+			Directory.CreateDirectory(filePath);
+		}
+
+		sw = new StreamWriter(filePath + fullName, true);
 
 		isRecording = true;
 
@@ -58,14 +68,32 @@ function record(doRecord) {
 
 		var distances = carSensor.distances;
 		var steerAngle = carController.CurrentSteerAngle;
+		var currentSpeed = carController.CurrentSpeed;
+		var verticalInput = carController.AccelInput;
 
 		var saveString: String = "";
 
-		for (i = 0; i < distances.Count; i++) {
-			saveString = saveString + distances[i] + ",";
+		if (doRecordSensors) {
+			for (i = 0; i < distances.Count; i++) {
+				saveString = saveString + distances[i] + ",";
+			}
 		}
 
-		saveString = saveString + steerAngle;
+		if (doRecordSteerAngle) {
+			saveString = saveString + steerAngle + ",";
+		}
+
+		if (doRecordCurrentSpeed) {
+			saveString = saveString + currentSpeed + ",";
+		}
+
+		if (doRecordSteerAngle) {
+			saveString = saveString + verticalInput + ",";
+		}
+
+		if (saveString[saveString.Length - 1] == ",") {
+			saveString = saveString.Substring(0, saveString.Length - 1);
+		}
 
 		sw.WriteLine(saveString);
 		sw.Flush();
