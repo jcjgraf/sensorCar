@@ -567,7 +567,7 @@ GameObject:
   - component: {fileID: 114454712590431008}
   - component: {fileID: 114045487623914894}
   m_Layer: 0
-  m_Name: Car17Sensors 1
+  m_Name: Car21Sensors 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5943,6 +5943,10 @@ MonoBehaviour:
   recordTimeInterval: 0.2
   carSensor: {fileID: 114587548480673616}
   carController: {fileID: 114552904503200584}
+  doRecordSensors: 1
+  doRecordSteerAngle: 1
+  doRecordCurrentSpeed: 0
+  doRecordVerticalInput: 0
 --- !u!114 &114412996237330436
 MonoBehaviour:
   m_ObjectHideFlags: 1

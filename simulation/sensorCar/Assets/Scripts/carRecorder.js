@@ -87,8 +87,8 @@ function record(doRecord) {
 			saveString = saveString + currentSpeed + ",";
 		}
 
-		if (doRecordSteerAngle) {
-			saveString = saveString + verticalInput + ",";
+		if (doRecordVerticalInput) {
+			saveString = saveString + verticalInput;
 		}
 
 		if (saveString[saveString.Length - 1] == ",") {
