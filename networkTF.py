@@ -2,11 +2,12 @@
 
 """
 
-import functools
+from functools import wraps
 
 import numpy as np
 import tensorflow as tf
 import os
+import shutil
 import time
 
 class NetworkTF:
@@ -15,7 +16,7 @@ class NetworkTF:
 		attribute = "_cache_" + inputFunc.__name__
 
 		@property
-		@functools.wraps(inputFunc)
+		@wraps(inputFunc)
 		def check_attr(self):
 			if not hasattr(self, attribute):
 				setattr(self, attribute, inputFunc(self))
@@ -26,29 +27,45 @@ class NetworkTF:
 	dataSet = None
 	savePath = None
 
+	def __init__(self, shape, learningRate=0.3, dataSet=None):
 
-	def __init__(self, shape, dataSet=None):
+		# tf.reset_default_graph()
 		self.shape = shape
+
+		self.learningRate = learningRate
 
 		if dataSet is not None:
 			self.dataSet = dataSet
 
 		# Tensorflow attributes
-		self.x = tf.placeholder(tf.float32, shape=[None, self.shape[0]])
-		self.y = tf.placeholder(tf.float32, shape=[None, self.shape[-1]])
 
-		self.learningRate = 0.5
+		self.x = tf.placeholder(tf.float32, shape=[None, self.shape[0]], name="InputData")
+		self.y = tf.placeholder(tf.float32, shape=[None, self.shape[-1]], name="LabelData")
+
+		# self.logDir = "./log/networkTF"
+		# try:
+		# 	shutil.rmtree(self.logDir)
+		# except:
+		# 	pass
+		# os.makedirs(self.logDir)
 
 		self.weights = self._getInitWeights()
+
+		self.saver = self.saver()
 
 		self.sess = tf.Session()
 		self.sess.run(tf.global_variables_initializer())
 
+		# self.summaryWriter = tf.summary.FileWriter(self.logDir, graph=tf.get_default_graph())
+
 		self.predict
-		# self.optimizer
+		self.optimizer
 		self.loss
 
-	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveStep=None):
+		# tf.summary.scalar("loss", self.loss)
+		# self.mergedSummary = tf.summary.merge_all()
+
+	def train(self, epochs=1, verbosity=1, saveStep=None):
 
 		# Check if training possible
 		if self.dataSet is None:
@@ -60,7 +77,7 @@ class NetworkTF:
 		if saveStep is not None:
 			ds = self.dataSet.fullDataSetPath
 
-			self.savePath = "./savedNetTF/" + "".join(str(e) + "-" for e in self.shape) + str(learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
+			self.savePath = "./savedNetTF/" + "".join(str(e) + "-" for e in self.shape) + str(self.learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
 
 			while os.path.exists(self.savePath):
 				self.savePath = self.savePath[:self.savePath.rfind("/")] + "I" + self.savePath[self.savePath.rfind("/"):]
@@ -102,20 +119,32 @@ class NetworkTF:
 					doPrint = True
 
 				for line in trf:
-					print("Process line")
+
 					lineEntities = np.array([float(i) for i in line.split(",")], dtype=np.float128)
 					inputs = np.array(lineEntities[:self.dataSet.inputLabelNumber[0]], ndmin=2)
 					labels = np.array(np.divide(lineEntities[-self.dataSet.inputLabelNumber[1]:], 25), ndmin=2)
 
-					self.sess.run(self.optimizer(learningRate), feed_dict={self.x: inputs, self.y: labels})
+					loss = self.sess.run(self.loss, {self.x: inputs, self.y: labels})
 
-					costSum += self.sess.run(self.loss, feed_dict={self.x: inputs, self.y: labels})
+					# _, summary = self.sess.run([self.optimizer, self.mergedSummary], {self.x: inputs, self.y: labels})
+					_ = self.sess.run(self.optimizer, {self.x: inputs, self.y: labels})
+
+					costSum += loss
 
 					numberOfLines += 1
 
 			costList.append(costSum / numberOfLines)
 
 			cost = costSum / numberOfLines
+
+			name = self.savePath[:self.savePath.rfind("/")][self.savePath[:self.savePath.rfind("/")].rfind("/") + 1:] + ".txt"
+
+			self.saveTrainingData(self.savePath + name, cost)
+
+			# addListSummary = tf.Summary()
+			# addListSummary.value.add(tag="MeanLoss", simple_value=np.mean(cost))
+			# self.summaryWriter.add_summary(addListSummary, epoch)
+			# self.summaryWriter.flush()
 
 			deltaEpochCost = previousEpochCost - cost
 			previousEpochCost = cost
@@ -145,7 +174,7 @@ class NetworkTF:
 		return self.sess.run(self.predict, feed_dict={self.x: xData})
 
 	def _getInitWeights(self):
-		return [tf.Variable(tf.truncated_normal([fromLayer, toLayer], stddev=0.1, name="weight{}".format(i))) for i, (fromLayer, toLayer) in enumerate(zip(self.shape[:-1], self.shape[1:]))]
+		return [tf.Variable(tf.truncated_normal([fromLayer, toLayer], stddev=0.1), name="Weight{}".format(i)) for i, (fromLayer, toLayer) in enumerate(zip(self.shape[:-1], self.shape[1:]))]
 
 	@propertyWithCheck
 	def predict(self):
@@ -160,17 +189,13 @@ class NetworkTF:
 	def loss(self):
 		return tf.reduce_mean(tf.square(self.y - self.predict))
 
-	# @propertyWithCheck
-	def optimizer(self, learningRate):
-		return tf.train.GradientDescentOptimizer(learningRate).minimize(self.loss)
-
 	@propertyWithCheck
-	def saver(self):
+	def optimizer(self):
+		return tf.train.GradientDescentOptimizer(self.learningRate).minimize(self.loss)
 
+	def saver(self):
 		return tf.train.Saver(max_to_keep=10000)
 
-	# def evaluate(self, xData, yData):
-		# return self.sess.run(self.loss, feed_dict={self.x: xData, self.y: yData})
 	def evaluate(self, xData):
 		return self.getPrediction(xData)
 
@@ -182,17 +207,12 @@ class NetworkTF:
 		self.saver.restore(self.sess, modelPath)
 		print("Loaded model from {}".format(modelPath))
 
+	def saveTrainingData(self, filePath, toSave):
+		# os.makedirs(filePath)
 
-if __name__ == '__main__':
+		print("Saving network training data to {}".format(filePath))
 
-	networkTF = NetworkTF([3, 100, 1])
-
-	# xData = np.array([[0.01, 0.01], [0.01, 0.99], [0.99, 0.99], [0.99, 0.01]])
-	# yData = np.array([[0.99], [0.01], [0.99], [0.01]])
-
-	networkTF.train(epochs=10, saveStep=10)
-	# networkTF.doLoad("./savedNetTF/2-3-1-0_5IIIIIIIIII/model-999")
-
-	print(networkTF.getPrediction(np.array([[.99, .99]])))
+		with open(filePath, "a") as f:
+			f.write(str(toSave) + "\n")
 
 
