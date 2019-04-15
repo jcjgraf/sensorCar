@@ -62,7 +62,6 @@ group.add_argument('-d','--drive',
 args = parser.parse_args()
 
 def runCar(networkPath, networkType):
-	print(networkPath)
 	start = re.search("/\d", networkPath).start() + 1
 	end = re.search("\d_", networkPath).start() - 1
 	shape = [int(e) for e in networkPath[start:end].split("-")]
@@ -93,14 +92,12 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType):
 		network.train(epochs=epochs, verbosity=10, saveStep=10)
 
 if __name__ == '__main__':
-	print(args)
 
 	if args.datasetpath:
 		if args.shape is None:
 			parser.error("--training requires --shape")
 
 		else:
-			print(args.shape)
 			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype)
 
 	elif args.networkpath:
