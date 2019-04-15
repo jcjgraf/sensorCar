@@ -58,7 +58,7 @@ public class CarSensor : MonoBehaviour {
 
 		for (int i = 0; i < distances.Count; i++) {	
 
-				texts[0].text += "Sensor " + i + (int)distances[i] + "\n";
+				texts[0].text += i + 1 + ": " + (int)distances[i] + "\n";
 
 		}
 
