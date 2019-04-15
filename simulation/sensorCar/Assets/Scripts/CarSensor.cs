@@ -54,11 +54,11 @@ public class CarSensor : MonoBehaviour {
 			Display the distance in the UI
 		*/
 
-		for (int i = 0; i < texts.Length; i++) {
+		texts [0].text = "";
 
-			// At the beginning the ui is not rendered, therefore the texts array is empty. Therefore we need a try and catch
+		for (int i = 0; i < distances.Count; i++) {	
 
-			texts[i].text = "Sensor " + i + ": " + (int)distances[i];
+				texts[0].text += i + 1 + ": " + (int)distances[i] + "\n";
 
 		}
 
