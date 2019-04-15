@@ -27,9 +27,11 @@ class NetworkTF:
 	dataSet = None
 	savePath = None
 
-	def __init__(self, shape, learningRate=0.3, dataSet=None):
+	def __init__(self, shape, learningRate=0.3, dataSet=None, tensorboard=False):
 
-		# tf.reset_default_graph()
+		self.tensorboard = tensorboard
+
+		tf.reset_default_graph()
 		self.shape = shape
 
 		self.learningRate = learningRate
@@ -42,28 +44,31 @@ class NetworkTF:
 		self.x = tf.placeholder(tf.float32, shape=[None, self.shape[0]], name="InputData")
 		self.y = tf.placeholder(tf.float32, shape=[None, self.shape[-1]], name="LabelData")
 
-		# self.logDir = "./log/networkTF"
-		# try:
-		# 	shutil.rmtree(self.logDir)
-		# except:
-		# 	pass
-		# os.makedirs(self.logDir)
-
 		self.weights = self._getInitWeights()
 
 		self.saver = self.saver()
-
-		self.sess = tf.Session()
-		self.sess.run(tf.global_variables_initializer())
-
-		# self.summaryWriter = tf.summary.FileWriter(self.logDir, graph=tf.get_default_graph())
 
 		self.predict
 		self.optimizer
 		self.loss
 
-		# tf.summary.scalar("loss", self.loss)
-		# self.mergedSummary = tf.summary.merge_all()
+		if self.tensorboard:
+			self.logDir = "./log/networkTF"
+
+			try:
+				shutil.rmtree(self.logDir)
+			except:
+				pass
+			os.makedirs(self.logDir)
+
+			tf.summary.scalar("loss", self.loss)
+			self.mergedSummary = tf.summary.merge_all()
+
+		self.sess = tf.Session()
+		self.sess.run(tf.global_variables_initializer())
+
+		if self.tensorboard:
+			self.summaryWriter = tf.summary.FileWriter(self.logDir, graph=tf.get_default_graph())
 
 	def train(self, epochs=1, verbosity=1, saveStep=None):
 
@@ -100,6 +105,8 @@ class NetworkTF:
 		deltaPrintCost = 0
 		previousPrintCost = 0
 
+		counter = 0
+
 		for epoch in range(epochs):
 
 			with open(self.dataSet.trainingDataSetPath, "r") as trf:
@@ -126,12 +133,16 @@ class NetworkTF:
 
 					loss = self.sess.run(self.loss, {self.x: inputs, self.y: labels})
 
-					# _, summary = self.sess.run([self.optimizer, self.mergedSummary], {self.x: inputs, self.y: labels})
+					if self.tensorboard:
+						summary = self.sess.run(self.mergedSummary, {self.x: inputs, self.y: labels})
+						self.summaryWriter.add_summary(summary, counter)
+
 					_ = self.sess.run(self.optimizer, {self.x: inputs, self.y: labels})
 
 					costSum += loss
 
 					numberOfLines += 1
+					counter += 1
 
 			costList.append(costSum / numberOfLines)
 
@@ -141,10 +152,11 @@ class NetworkTF:
 
 			self.saveTrainingData(self.savePath + name, cost)
 
-			# addListSummary = tf.Summary()
-			# addListSummary.value.add(tag="MeanLoss", simple_value=np.mean(cost))
-			# self.summaryWriter.add_summary(addListSummary, epoch)
-			# self.summaryWriter.flush()
+			if self.tensorboard:
+				addListSummary = tf.Summary()
+				addListSummary.value.add(tag="MeanLoss", simple_value=cost)
+				self.summaryWriter.add_summary(addListSummary, epoch)
+				self.summaryWriter.flush()
 
 			deltaEpochCost = previousEpochCost - cost
 			previousEpochCost = cost

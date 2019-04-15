@@ -39,12 +39,16 @@ parser.add_argument('-e','--epochs',
 	type=int,
 	help='epochs used in conjunction with --training')
 
-
 parser.add_argument('-s','--shape',
 	dest='shape',
 	nargs='+',
 	type=int,
 	help='shape used in conjunction with --training')
+
+parser.add_argument('-g','--graphic',
+	dest='tensorboard',
+ 	action='store_true',
+	help='enable tensorboard representation')
 
 
 group = parser.add_mutually_exclusive_group(required=True)
@@ -79,7 +83,7 @@ def runCar(networkPath, networkType):
 	sensorCarController = SensorCarController(network)
 	sensorCarController.startServer()
 
-def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType):
+def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorboard):
 
 	dataSet = DataSet(dataSetPath, [shape[0], shape[-1]])
 
@@ -88,7 +92,7 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType):
 		network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveNet=10)
 
 	elif networkType == 'tf':
-		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet)
+		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet, tensorboard=tensorboard)
 		network.train(epochs=epochs, verbosity=10, saveStep=10)
 
 if __name__ == '__main__':
@@ -98,7 +102,7 @@ if __name__ == '__main__':
 			parser.error("--training requires --shape")
 
 		else:
-			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype)
+			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype, args.tensorboard)
 
 	elif args.networkpath:
 		runCar(args.networkpath[0], args.networktype)
