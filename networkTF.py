@@ -40,6 +40,13 @@ class NetworkTF:
 		if dataSet is not None:
 			self.dataSet = dataSet
 
+			ds = self.dataSet.fullDataSetPath
+
+			self.uid =  "".join(str(e) + "-" for e in self.shape) + str(self.learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")]
+
+		else:
+			self.uid = "".join(str(e) + "-" for e in self.shape) + str(self.learningRate).replace('.', '_')
+
 		# Tensorflow attributes
 
 		self.x = tf.placeholder(tf.float32, shape=[None, self.shape[0]], name="InputData")
@@ -54,7 +61,7 @@ class NetworkTF:
 		self.loss
 
 		if self.tensorboardEnabled:
-			self.logDir = tensorboard + str(int(time.time()))
+			self.logDir = tensorboard + self.uid + str(int(time.time()))
 			pathlib.Path(self.logDir).mkdir(parents=True, exist_ok=True)
 
 			tf.summary.scalar("loss", self.loss)
@@ -78,7 +85,7 @@ class NetworkTF:
 		if saveStep is not None:
 			ds = self.dataSet.fullDataSetPath
 
-			self.savePath = "./savedNetTF/" + "".join(str(e) + "-" for e in self.shape) + str(self.learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
+			self.savePath = "./savedNetTF/" + self.uid + "/"
 
 			while os.path.exists(self.savePath):
 				self.savePath = self.savePath[:self.savePath.rfind("/")] + "I" + self.savePath[self.savePath.rfind("/"):]
@@ -86,6 +93,9 @@ class NetworkTF:
 			os.makedirs(self.savePath)
 
 			self.saver
+
+			if saveStep == -1:
+				previousCost = 1e309
 
 		startTrainingTime = time.time()  # Used for calculating used time
 		costList = []  # Holds the cost value of each epoch
@@ -173,11 +183,12 @@ class NetworkTF:
 				print("{0}{1}{0}".format(5 * "-", self.shape))
 				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
-			# if printStep and (step == 0 or step == epochs or step % printStep == 0):
-			# 	print(step, self.sess.run(self.loss, feed_dict={self.x: xData, self.y: yData}))
-
 			if saveStep is not None and ((epoch == 0) or (epoch == epochs - 1) or epoch % saveStep == 0):
 				self.doSave(epoch)
+
+			if saveStep == -1 and (previousCost > cost):
+				self.doSave(epoch)
+				previousCost = cost
 
 	def getPrediction(self, xData):
 		return self.sess.run(self.predict, feed_dict={self.x: xData})
@@ -219,7 +230,7 @@ class NetworkTF:
 	def saveTrainingData(self, filePath, toSave):
 		# os.makedirs(filePath)
 
-		print("Saving network training data to {}".format(filePath))
+		# print("Saving network training data to {}".format(filePath))
 
 		with open(filePath, "a") as f:
 			f.write(str(toSave) + "\n")

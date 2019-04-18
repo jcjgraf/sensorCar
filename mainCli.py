@@ -50,6 +50,11 @@ parser.add_argument('-g','--graphic',
 	nargs='*',
 	help='enable tensorboard representation and optionally provide a log directory')
 
+parser.add_argument('-i','--saveinterval',
+	dest='saveinterval',
+	type=int,
+	help='determine after how many epochs the networks is saved')
+
 
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-t','--training',
@@ -83,7 +88,7 @@ def runCar(networkPath, networkType):
 	sensorCarController = SensorCarController(network)
 	sensorCarController.startServer()
 
-def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorboard):
+def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorboard, saveinterval):
 
 	dataSet = DataSet(dataSetPath, [shape[0], shape[-1]])
 
@@ -101,7 +106,7 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorbo
 			tensorboardPath = './log/'
 
 		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet, tensorboard=tensorboardPath)
-		network.train(epochs=epochs, verbosity=10)
+		network.train(epochs=epochs, verbosity=10, saveStep=saveinterval)
 
 if __name__ == '__main__':
 
@@ -110,7 +115,7 @@ if __name__ == '__main__':
 			parser.error("--training requires --shape")
 
 		else:
-			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype, args.tensorboard)
+			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype, args.tensorboard, args.saveinterval)
 
 	elif args.networkpath:
 		runCar(args.networkpath[0], args.networktype)
