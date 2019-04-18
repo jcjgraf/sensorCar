@@ -73,7 +73,7 @@ class NetworkTF:
 		if self.tensorboardEnabled:
 			self.summaryWriter = tf.summary.FileWriter(self.logDir, graph=tf.get_default_graph())
 
-	def train(self, epochs=1, verbosity=1, saveStep=None):
+	def train(self, epochs=1, verbosity=1, saveStep=None, savePath=None):
 
 		# Check if training possible
 		if self.dataSet is None:
@@ -85,7 +85,10 @@ class NetworkTF:
 		if saveStep is not None:
 			ds = self.dataSet.fullDataSetPath
 
-			self.savePath = "./savedNetTF/" + self.uid + "/"
+			savePath = savePath if savePath is not None else './savedNetTF/'
+			savePath = savePath if savePath[-1] == '/' else savePath + '/'
+
+			self.savePath = savePath + self.uid + '/'
 
 			while os.path.exists(self.savePath):
 				self.savePath = self.savePath[:self.savePath.rfind("/")] + "I" + self.savePath[self.savePath.rfind("/"):]
