@@ -8,6 +8,7 @@ import numpy as np
 import tensorflow as tf
 import os
 import shutil
+import pathlib
 import time
 
 class NetworkTF:
@@ -27,9 +28,9 @@ class NetworkTF:
 	dataSet = None
 	savePath = None
 
-	def __init__(self, shape, learningRate=0.3, dataSet=None, tensorboard=False):
+	def __init__(self, shape, learningRate=0.3, dataSet=None, tensorboard=None):
 
-		self.tensorboard = tensorboard
+		self.tensorboardEnabled = True if tensorboard is not None else False
 
 		tf.reset_default_graph()
 		self.shape = shape
@@ -52,14 +53,9 @@ class NetworkTF:
 		self.optimizer
 		self.loss
 
-		if self.tensorboard:
-			self.logDir = "./log/networkTF"
-
-			try:
-				shutil.rmtree(self.logDir)
-			except:
-				pass
-			os.makedirs(self.logDir)
+		if self.tensorboardEnabled:
+			self.logDir = tensorboard + str(int(time.time()))
+			pathlib.Path(self.logDir).mkdir(parents=True, exist_ok=True)
 
 			tf.summary.scalar("loss", self.loss)
 			self.mergedSummary = tf.summary.merge_all()
@@ -67,7 +63,7 @@ class NetworkTF:
 		self.sess = tf.Session()
 		self.sess.run(tf.global_variables_initializer())
 
-		if self.tensorboard:
+		if self.tensorboardEnabled:
 			self.summaryWriter = tf.summary.FileWriter(self.logDir, graph=tf.get_default_graph())
 
 	def train(self, epochs=1, verbosity=1, saveStep=None):
@@ -133,7 +129,7 @@ class NetworkTF:
 
 					loss = self.sess.run(self.loss, {self.x: inputs, self.y: labels})
 
-					if self.tensorboard:
+					if self.tensorboardEnabled:
 						summary = self.sess.run(self.mergedSummary, {self.x: inputs, self.y: labels})
 						self.summaryWriter.add_summary(summary, counter)
 
@@ -148,11 +144,12 @@ class NetworkTF:
 
 			cost = costSum / numberOfLines
 
-			name = self.savePath[:self.savePath.rfind("/")][self.savePath[:self.savePath.rfind("/")].rfind("/") + 1:] + ".txt"
+			if saveStep is not None:
+				name = self.savePath[:self.savePath.rfind("/")][self.savePath[:self.savePath.rfind("/")].rfind("/") + 1:] + ".txt"
 
-			self.saveTrainingData(self.savePath + name, cost)
+				self.saveTrainingData(self.savePath + name, cost)
 
-			if self.tensorboard:
+			if self.tensorboardEnabled:
 				addListSummary = tf.Summary()
 				addListSummary.value.add(tag="MeanLoss", simple_value=cost)
 				self.summaryWriter.add_summary(addListSummary, epoch)

@@ -47,8 +47,8 @@ parser.add_argument('-s','--shape',
 
 parser.add_argument('-g','--graphic',
 	dest='tensorboard',
- 	action='store_true',
-	help='enable tensorboard representation')
+	nargs='*',
+	help='enable tensorboard representation and optionally provide a log directory')
 
 
 group = parser.add_mutually_exclusive_group(required=True)
@@ -92,8 +92,16 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorbo
 		network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveNet=10)
 
 	elif networkType == 'tf':
-		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet, tensorboard=tensorboard)
-		network.train(epochs=epochs, verbosity=10, saveStep=10)
+		tensorboardPath = None
+
+		if len(tensorboard) > 0:
+			tensorboardPath = tensorboard[0] if tensorboard[-1] == '/' else tensorboard[0] + '/'
+
+		else:
+			tensorboardPath = './log/'
+
+		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet, tensorboard=tensorboardPath)
+		network.train(epochs=epochs, verbosity=10)
 
 if __name__ == '__main__':
 
