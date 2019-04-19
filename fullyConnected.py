@@ -46,7 +46,7 @@ class FullyConnected():
 			true or false (Default is false)
 		"""
 
-		layerVector = inputVector.reshape(len(inputVector), 1)
+		layerVector = inputVector.reshape(len(inputVector.flatten()), 1)
 
 		networkLayerValues = [inputVector]
 

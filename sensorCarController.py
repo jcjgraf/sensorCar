@@ -66,7 +66,12 @@ class SensorCarController():
 		"""
 
 		# Convert string of json to float list
-		inputVector = np.array([float(data[key]) for key in data], dtype=np.float32)
+		# inputVector = np.array([float(data[key]) for key in data], dtype=np.float32)
+		inputVector = np.array([[float(data[key]) for key in data]], dtype=np.float32)
+
+		# inputVector.ex
+
+		print("inputV", inputVector)
 
 		# evaluate in net
 		outputVector = self.network.evaluate(inputVector)[0][0]

@@ -18,10 +18,10 @@ public class CarSensor : MonoBehaviour {
 	[SerializeField] private Text[] texts;
 
 	public List<float> distances;
-
+	
 	void Update() {
 		/*
-			Mesure distance between sensor and hit object and return an array
+			Mesure distance between sensor and hit object and return an array 
 			containg the information for all sensors
 		*/
 
@@ -39,7 +39,7 @@ public class CarSensor : MonoBehaviour {
 			// If if hits something, draw a line and get the distance between the sonsor and the hitted object
 			if (Physics.Raycast(position, sensorUnitVector, out hit, Mathf.Infinity)) {  // error: if sensor hits nothing, no value is given for this sensor -> array has not n elements
 
-				Debug.DrawLine(position, hit.point, Color.red);
+				Debug.DrawLine(position, hit.point, Color.green);
 
 				// Get distance between sensor head and the hit object
 				distances[i] = Vector3.Distance(position, hit.point);
