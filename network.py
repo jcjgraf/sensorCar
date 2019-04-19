@@ -36,14 +36,14 @@ class Network():
 		if dataSet is not False:
 			self.dataSet = dataSet
 
-	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveNet=None, savePath=None):
+	def train(self, epochs=1, learningRate=0.3, verbosity=1, saveStep=None, savePath=None):
 		"""
 			If a dataSet is initiated and assigned the dff is trained.
 			Activation determines the activationfunction and can eigheter be
 			"sigmoid" or "tamh". An optional epochs (Default is 1) and
 			learningRate (Defualt is 0.3) can be given. Verbosity determines the
 			number of epochs after which some information is printed out. The
-			optional saveNet is the number of epochs after which the network
+			optional saveStep is the number of epochs after which the network
 			instance is saved to the savePath if provided. Else it will be saved
 			to a default path.
 			Returns a list containing all costfunction values of each epoch
@@ -56,7 +56,7 @@ class Network():
 
 		print("{0}\nTraining started\nnumberOfEpochs: {1}".format(15 * "-", epochs))
 
-		if saveNet is not None:
+		if saveStep is not None:
 			ds = self.dataSet.fullDataSetPath
 
 			savePath = savePath if savePath is not None else './savedNetTF/'
@@ -69,6 +69,9 @@ class Network():
 				savePath = savePath[:savePath.rfind("/")] + "I" + savePath[savePath.rfind("/"):]
 
 			os.makedirs(savePath)
+
+			if saveStep == -1:
+				previousCost = 1e309
 
 		startTrainingTime = time.time()  # Used for calculating used time
 		costList = []  # Holds the cost value of each epoch
@@ -141,11 +144,15 @@ class Network():
 				print("{0}{1}{0}".format(5 * "-", self.dff.shape))
 				print("deltaTrainingTime:\t{},\ndeltaEpochTrainingTime:\t{},\ndeltaPrintTrainingTime:\t{},\ncost:\t{},\ndeltaEpochCost:\t{},\ndeltaPrintCost:\t{}".format(deltaTrainingTime, deltaEpochTrainingTime, deltaPrintTrainingTime, cost, deltaEpochCost, deltaPrintCost))
 
-			if saveNet is not None:
+			if saveStep is not None:
 				self.saveTrainingData(savePath + "training.txt", str(cost))
 
-				if (epoch + 1) % saveNet == 0 or epoch == epochs - 1:
+				if ((epoch == 0) or (epoch == epochs - 1) or epoch % saveStep == 0):
 					self.saveNet(savePath + str(epoch + 1) + ".txt")
+
+			if saveStep == -1 and (previousCost > cost):
+				self.saveNet(savePath + str(epoch + 1) + ".txt")
+				previousCost = cost
 
 		print("{0}\nepochs: {1},\ncost: {3},\ntrainingTime: {2}\n{0}".format(20 * "-", epochs, time.time() - startTrainingTime, costList[-1]))
 

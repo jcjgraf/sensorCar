@@ -97,7 +97,7 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorbo
 
 	if networkType == 'np':
 		network = Network(shape, ActivationFunction.tanh, dataSet)
-		network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveNet=10)
+		network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveStep=saveinterval)
 
 	elif networkType == 'tf':
 		tensorboardPath = None
