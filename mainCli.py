@@ -65,12 +65,10 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-t','--training',
 	dest='datasetpath',
 	nargs=1,
-	# metavar='Datasetpath',
 	help='Path to the dataset for training mode')
 group.add_argument('-d','--drive',
 	dest='networkpath',
 	nargs=1,
-	# metavar='Networkpath',
 	help='Path to the network model file drive mode')
 
 args = parser.parse_args()
@@ -120,7 +118,9 @@ if __name__ == '__main__':
 			parser.error("--training requires --shape")
 
 		else:
-			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype, args.tensorboard, args.saveinterval, args.savepath[0])
+			savePath = None if args.savepath is None else None if len(args.savepath) < 1 else args.savepath[0]
+
+			trainNetwork(args.shape, args.learningrate, args.datasetpath[0], args.epochs, args.networktype, args.tensorboard, args.saveinterval, savePath)
 
 	elif args.networkpath:
 		runCar(args.networkpath[0], args.networktype)
