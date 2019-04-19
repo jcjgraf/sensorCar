@@ -57,12 +57,12 @@ class Network():
 		print("{0}\nTraining started\nnumberOfEpochs: {1}".format(15 * "-", epochs))
 
 		if saveNet is not None:
+			ds = self.dataSet.fullDataSetPath
 
-			# Set default filepath if none is provided
-			if savePath is None:
-				ds = self.dataSet.fullDataSetPath
+			savePath = savePath if savePath is not None else './savedNetTF/'
+			savePath = savePath if savePath[-1] == '/' else savePath + '/'
 
-				savePath = "./savedNet/" + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
+			savePath = savePath + "".join(str(e) + "-" for e in self.dff.shape[0].tolist()) + str(learningRate).replace('.', '_') + "-" + ds[ds.rfind("/") + 1: ds.rfind(".")] + "/"
 
 			# Check if dir already exists, if so add roman letters behinde it
 			while os.path.exists(savePath):
