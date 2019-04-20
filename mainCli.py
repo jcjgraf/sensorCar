@@ -100,13 +100,8 @@ def trainNetwork(shape, learningRate, dataSetPath, epochs, networkType, tensorbo
 		network.train(epochs=epochs, learningRate=learningRate, verbosity=10, saveStep=saveinterval)
 
 	elif networkType == 'tf':
-		tensorboardPath = None
 
-		if len(tensorboard) > 0:
-			tensorboardPath = tensorboard[0] if tensorboard[-1] == '/' else tensorboard[0] + '/'
-
-		else:
-			tensorboardPath = './log/'
+		tensorboardPath = None if tensorboard is None else ((tensorboard[0] if tensorboard[0][-1] == '/' else tensorboard[0] + '/') if len(tensorboard) > 0 else './log/')
 
 		network = NetworkTF(shape, learningRate=learningRate, dataSet=dataSet, tensorboard=tensorboardPath)
 		network.train(epochs=epochs, verbosity=10, saveStep=saveinterval, savePath=savepath)
