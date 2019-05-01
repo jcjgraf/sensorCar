@@ -6,6 +6,10 @@ public class RoadGenerator : MonoBehaviour {
 
 	public Transform car;
 
+	public int numberOfSegments = 7;
+
+	public bool removePassedSegments = true;
+
 	public RoadSegment[] roadSegments;
 
 	private Vector3 segmentStartPosition;
@@ -14,8 +18,6 @@ public class RoadGenerator : MonoBehaviour {
 	private Queue<Transform> roadSegmentsQueue;
 
 	private GameObject lastRoadSegment;
-
-	private int numberOfSegments;
 
 	private int lastIndex;
 
@@ -41,11 +43,10 @@ public class RoadGenerator : MonoBehaviour {
 		startPositionList.Add(segmentStartPosition);
 		startRotationList.Add(segmentStartRotation);
 
-		numberOfSegments = 7;
 		lastIndex = 0;
 
 		//TODO for debugging
-		numberList = new List<int>() { 0, 0, 1, 1, 1, 0, 0, 0, 0};
+		numberList = new List<int>() { 0, 0, 1, 1, 2, 2, 0, 1, 0, 0, 1, 1, 0, 2, 1, 0, 2, 2, 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 0, 0, 1, 1, 0, 2, 0, 0, 0 };
 
 		// Create straight road segments at the beginning
 		generateRoad(0);
@@ -62,10 +63,13 @@ public class RoadGenerator : MonoBehaviour {
 		if (getCurrentSegment() > firstSegment + 1) { // + 1 in order to always leave a segment
 
 			Transform toRemove = roadSegmentsQueue.Dequeue();
-			Destroy(toRemove.gameObject);
 
-			startPositionList.RemoveAt (0);
-			startRotationList.RemoveAt (0);
+			if (removePassedSegments) {
+				Destroy (toRemove.gameObject);
+
+				startPositionList.RemoveAt (0);
+				startRotationList.RemoveAt (0);
+			}
 		}
 
 		generateRoad();
