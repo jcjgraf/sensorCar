@@ -7,6 +7,7 @@ public class DrawLine : MonoBehaviour {
 	[SerializeField] private GameObject lineGeneratorPrefab;
 	[SerializeField] private Transform car;
 	[SerializeField] private float deltaRecordTime;
+	[SerializeField] private float lineWidth = 1;
 
 	private List<Vector3> pointPositions;
 
@@ -17,6 +18,7 @@ public class DrawLine : MonoBehaviour {
 	private void Start() {
 		lineGenerator = Instantiate (lineGeneratorPrefab);
 		lineRenderer = lineGenerator.GetComponent<LineRenderer> ();
+		lineRenderer.SetWidth(0, lineWidth);
 
 		pointPositions = new List<Vector3> ();
 
@@ -24,7 +26,6 @@ public class DrawLine : MonoBehaviour {
 	}
 
 	private void drawLineSegment() {
-		
 		pointPositions.Add (car.position);
 
 		lineRenderer.positionCount = pointPositions.Count;
