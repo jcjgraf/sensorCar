@@ -1,4 +1,4 @@
-﻿	using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +20,8 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		Dictionary<string, string> data;
 
+		[SerializeField] private bool doNetSteer = true;
+
 		[SerializeField] private float verticalInput = 0.25f;
 		[SerializeField] private bool doAutoAccelerate = false;
 		[SerializeField] private bool doIgnoreVertical = false;
@@ -38,7 +40,15 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		public void Update() {
 
-			if ((netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) || netControl == false) {
+			if (!doNetSteer) {
+				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
+				float v = CrossPlatformInputManager.GetAxis ("Vertical");
+				float handbrake = CrossPlatformInputManager.GetAxis ("Jump");
+
+				carController.Move (h, v, v, handbrake);
+
+
+			} else if ((netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) || netControl == false) {
 
 				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
 				float v = 0f;
