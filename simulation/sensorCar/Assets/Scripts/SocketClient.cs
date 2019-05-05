@@ -40,7 +40,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 
 		public void Update() {
 
-			if (!doNetSteer) {
+			if (!doNetSteer || netControl == false) {
 				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
 				float v = CrossPlatformInputManager.GetAxis ("Vertical");
 				float handbrake = CrossPlatformInputManager.GetAxis ("Jump");
@@ -48,7 +48,7 @@ namespace UnityStandardAssets.Vehicles.Car {
 				carController.Move (h, v, v, handbrake);
 
 
-			} else if ((netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) || netControl == false) {
+			} else if (netControl && CrossPlatformInputManager.GetAxis ("Horizontal") != 0) {
 
 				float h = CrossPlatformInputManager.GetAxis ("Horizontal");
 				float v = 0f;
