@@ -28,6 +28,8 @@ namespace UnityStandardAssets.Vehicles.Car {
 				textfield.text += i + 1 + ": " + (int)carSensor.distances[i] + "\n";
 
 			}
+
+			textfield.text += "s: " + (int)carController.CurrentSpeed;
 		}
 	}
 }
