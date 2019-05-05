@@ -15,7 +15,6 @@ public class CarSensor : MonoBehaviour {
 	*/
 
 	[SerializeField] private GameObject[] sensors;
-	[SerializeField] private Text[] texts;
 
 	public List<float> distances;
 	
@@ -45,22 +44,5 @@ public class CarSensor : MonoBehaviour {
 				distances[i] = Vector3.Distance(position, hit.point);
 			}
 		}
-
-		displayDistance();
-	}
-
-	private void displayDistance() {
-		/*
-			Display the distance in the UI
-		*/
-
-		texts [0].text = "";
-
-		for (int i = 0; i < distances.Count; i++) {	
-
-				texts[0].text += i + 1 + ": " + (int)distances[i] + "\n";
-
-		}
-
 	}
 }
