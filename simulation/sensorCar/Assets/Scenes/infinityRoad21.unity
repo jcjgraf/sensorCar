@@ -336,6 +336,7 @@ MonoBehaviour:
     type: 2}
   car: {fileID: 0}
   deltaRecordTime: 0.2
+  lineWidth: 1
 --- !u!4 &725228400
 Transform:
   m_ObjectHideFlags: 0
@@ -476,6 +477,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1018605198 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1328273357633102, guid: 773f55091d82f4ab78454739bb8caf69,
+    type: 2}
+  m_PrefabInternal: {fileID: 1663549269}
+--- !u!114 &1018605206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1018605198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d43762ee596404892aa627e1471844, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textfield: {fileID: 493198991}
 --- !u!1001 &1351025686
 Prefab:
   m_ObjectHideFlags: 0
@@ -646,6 +664,36 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 29cba6f3e557c48c09c28540ebabf97b, type: 2}
+    - target: {fileID: 114454712590431008, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045487623914894, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114454712590431008, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: doNetSteer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114552904503200584, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: m_CarDriveType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114362977630167844, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: doRecordCurrentSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114362977630167844, guid: 773f55091d82f4ab78454739bb8caf69,
+        type: 2}
+      propertyPath: doRecordVerticalInput
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 773f55091d82f4ab78454739bb8caf69, type: 2}
   m_IsPrefabParent: 0

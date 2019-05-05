@@ -4376,6 +4376,7 @@ MonoBehaviour:
     type: 2}
   car: {fileID: 1023164587}
   deltaRecordTime: 0.2
+  lineWidth: 1
 --- !u!4 &725228400
 Transform:
   m_ObjectHideFlags: 0
@@ -4777,6 +4778,7 @@ GameObject:
   - component: {fileID: 917856615}
   - component: {fileID: 917856616}
   - component: {fileID: 917856617}
+  - component: {fileID: 917856610}
   m_Layer: 0
   m_Name: Car
   m_TagString: Player
@@ -4784,6 +4786,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &917856610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 917856609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d43762ee596404892aa627e1471844, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textfield: {fileID: 493198991}
 --- !u!114 &917856611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4912,6 +4926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9484cf1f87e894773ab4d8564652833d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doNetSteer: 1
   verticalInput: 0.15
   doAutoAccelerate: 1
   doIgnoreVertical: 0
@@ -4949,8 +4964,6 @@ MonoBehaviour:
   - {fileID: 1592888920}
   - {fileID: 1916110678}
   - {fileID: 1607184728}
-  texts:
-  - {fileID: 493198991}
   distances:
   - 0
   - 0
